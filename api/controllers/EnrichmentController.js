@@ -11,10 +11,10 @@ module.exports = {
 	extract: function(req, res, next) {
 		console.log('incoming request');
 		var files = req.params.all().files,
-			locationProperties = req.param('locationProperties'),
+			locationProperties = req.param('locationProperties') || 'IFCPOSTALADDRESS',
 			enrichments = [];
 
-			console.log('Initializing with properties: ' + locationProperties);
+		console.log('Initializing with properties: ' + locationProperties);
 
 		for (var idx = 0; idx < files.length; idx++) {
 			var file = files[idx],
