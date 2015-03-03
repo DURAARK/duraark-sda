@@ -16,4 +16,4 @@ APPFOLDER=$(dirname "${INDEXFILE}")
 #pm2 logs
 
 # Using 'nodemon' as process manager:
-(cd $APPFOLDER; nodemon -w api -w config)
+(cd $APPFOLDER; nodemon -w api -w config -w bindings)
