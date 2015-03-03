@@ -14,7 +14,7 @@ module.exports = {
 			locationProperties = req.param('locationProperties') || 'IFCPOSTALADDRESS',
 			enrichments = [];
 
-		console.log('Initializing with properties: ' + locationProperties);
+		console.log('Initializing with location pivot hint: ' + locationProperties);
 
 		for (var idx = 0; idx < files.length; idx++) {
 			var file = files[idx],
@@ -27,7 +27,6 @@ module.exports = {
 			// The outside 'idx' is bound to the anonymous callback function in line 43
 			// to have the idx available for triggering the sending of the response.
 			Enrichment.create(enrichmentInfo, function(idx, err, enrichment) {
-				console.log('created enrichment');
 				if (err) return next(err);
 
 				var ifcEnrichment = new IfcEnrichment();

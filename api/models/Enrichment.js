@@ -19,8 +19,8 @@ module.exports = {
 		},
 
 		metadata: {
-			type: 'array',
-			required: false
+			collection: 'enrichmentitem',
+			via: 'enrichment'
 		}
 	}
 };

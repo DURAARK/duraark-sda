@@ -53,55 +53,48 @@ IfcEnrichment.prototype.extractFromFile = function(enrichmentRecord, locationPro
             // FIXXME: remove in production mode!
 
             var arr = [],
-                jsonarray = [],
                 filename = process.argv[2],
                 limiter = 100, //TODO: Find better solution..
                 enrichmentFile = path.join(outputDir, 'enrichmentTriples.txt');
 
             fs.readFileSync(enrichmentFile).toString().split(/\r?\n/).forEach(function(line) {
-                arr = line.split(",");
-                //Dataset ID</td><td>Dataset name</td><td> Resource IDs</td><td> Resource URIs</td><td>
-                // Property URIs</td><td> and Resource Values</td></tr>
-                var items = {
-                    "dataset_id": arr[0],
-                    "dataset_name": arr[1],
-                    "resource_id": arr[2],
-                    "resource_uri": arr[3],
-                    "property_uri": arr[4],
-                    "resource_value": arr.slice(2, -1).join(' ')
-                };
                 if ((line.length > 6) && (limiter > 0)) {
-                    // if ((line.length > 6)) {
-                    jsonarray.push(items);
-                };
-                limiter = limiter - 1;
-            });
+                    limiter = limiter - 1;
+                    console.log('limiter: ' + limiter);
+                    // line -> Dataset ID</td><td>Dataset name</td><td> Resource IDs</td><td> Resource URIs</td><td>
+                    // Property URIs</td><td> and Resource Values</td></tr>
+                    arr = line.split(",");
 
-            fs.deleteSync(enrichmentFile);
-            fs.deleteSync(outputDir);
+                    var item = {
+                        datasetId: arr[0],
+                        datasetName: arr[1],
+                        resourceId: arr[2],
+                        resourceUri: arr[3],
+                        propertyUri: arr[4],
+                        // "resourceValue": arr.slice(2, -1).join(' ')
+                        enrichment: enrichmentRecord
+                    };
 
-            enrichmentRecord.status = 'finished';
+                    Enrichmentitem.create(item, function(err, itemRecord) {
+                        if (err) {
+                            console.log('[IfcEnrichment] error: ' + err);
+                            throw new Error('Error creating Enrichmentitem: ' + JSON.stringify(item));
+                        }
 
-            enrichmentRecord.metadata = jsonarray;
+                        enrichmentRecord.metadata.push(itemRecord);
+                        // console.log('limiter: ' + limiter);
+                        if (limiter === 0) { // FIXXME!!
+                            // fs.deleteSync(enrichmentFile);
+                            // fs.deleteSync(outputDir);
 
-            // enrichmentRecord.metadata = [{
-            //     datasetId: 'datasetId',
-            //     name: 'name',
-            //     resourceId: 'resourceId',
-            //     resourceUri: 'resourceUri',
-            //     propertyUri: 'propertyUri',
-            //     resourceValue: 'resourceValue'
-            // }, {
-            //     datasetId: 'datasetId',
-            //     name: 'name',
-            //     resourceId: 'resourceId',
-            //     resourceUri: 'resourceUri',
-            //     propertyUri: 'propertyUri',
-            //     resourceValue: 'resourceValue'
-            // }];
+                            enrichmentRecord.status = 'finished';
 
-            enrichmentRecord.save(function(err, record) {
-                console.log('[IfcEnrichment::extractFromFile] extracted metadata from file: ' + enrichmentRecord.originatingFile);
+                            enrichmentRecord.save(function(err, record) {
+                                console.log('[IfcEnrichment::extractFromFile] extracted metadata from file: ' + enrichmentRecord.originatingFile);
+                            });
+                        }
+                    });
+                }
             });
         });
     });
