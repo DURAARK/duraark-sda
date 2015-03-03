@@ -19,7 +19,12 @@ module.exports = {
 		},
 
 		metadata: {
-			collection: 'enrichmentitem',
+			collection: 'enrichmentItems',
+			via: 'enrichment'
+		},
+
+		availableItems: {
+			collection: 'enrichmentItems',
 			via: 'enrichment'
 		}
 	}
