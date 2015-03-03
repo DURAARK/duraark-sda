@@ -35,7 +35,7 @@ module.exports = {
 
 				enrichments.push(enrichment);
 
-				res.send(201, enrichment);
+				res.send(201, enrichments);
 
 				// enrichment.status = 'finished';
 
