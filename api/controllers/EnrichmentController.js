@@ -8,59 +8,62 @@
 var IfcEnrichment = require('../../bindings/ifcEnrichment/app');
 
 module.exports = {
-	extract: function(req, res, next) {
-		console.log('incoming request');
-		var files = req.params.all().files,
-			locationProperties = req.param('locationProperties') || 'IFCPOSTALADDRESS',
-			enrichments = [];
+    extract: function(req, res, next) {
+        console.log('incoming request');
+        var files = req.params.all().files,
+            locationProperties = req.param('locationProperties') || 'IFCPOSTALADDRESS',
+            enrichments = [];
 
-		console.log('Initializing with location pivot hint: ' + locationProperties);
+        console.log('Initializing with location pivot hint: ' + locationProperties);
 
-		for (var idx = 0; idx < files.length; idx++) {
-			var file = files[idx],
-				enrichmentInfo = {
-					originatingFile: file.path,
-					status: 'pending',
-					metadata: {}
-				};
+        for (var idx = 0; idx < files.length; idx++) {
+            var file = files[idx],
+                enrichmentInfo = {
+                    originatingFile: file.path,
+                    status: 'pending',
+                    availableItems: [],
+                    selectedItems: [],
+                };
 
-			// The outside 'idx' is bound to the anonymous callback function in line 43
-			// to have the idx available for triggering the sending of the response.
-			Enrichment.create(enrichmentInfo, function(idx, err, enrichment) {
-				if (err) return next(err);
+            // The outside 'idx' is bound to the anonymous callback function in line 43
+            // to have the idx available for triggering the sending of the response.
+            Enrichment.create(enrichmentInfo, function(idx, err, enrichment) {
+                if (err) return next(err);
 
-				var ifcEnrichment = new IfcEnrichment();
-				ifcEnrichment.extractFromFile(enrichment, locationProperties);
+                var ifcEnrichment = new IfcEnrichment();
+                ifcEnrichment.extractFromFile(enrichment, locationProperties);
 
-				enrichments.push(enrichment);
+                enrichments.push(enrichment);
 
-				res.send(201, enrichments);
+                if (idx === files.length - 1) {
+                    res.send(201, enrichments);
+                }
 
-				// enrichment.status = 'finished';
+                // enrichment.status = 'finished';
 
-				// enrichment.metadata = [{
-				// 	datasetId: 'datasetId',
-				// 	name: 'name',
-				// 	resourceId: 'resourceId',
-				// 	resourceUri: 'resourceUri',
-				// 	propertyUri: 'propertyUri',
-				// 	resourceValue: 'resourceValue'
-				// }, {
-				// 	datasetId: 'datasetId',
-				// 	name: 'name',
-				// 	resourceId: 'resourceId',
-				// 	resourceUri: 'resourceUri',
-				// 	propertyUri: 'propertyUri',
-				// 	resourceValue: 'resourceValue'
-				// }];
+                // enrichment.metadata = [{
+                // 	datasetId: 'datasetId',
+                // 	name: 'name',
+                // 	resourceId: 'resourceId',
+                // 	resourceUri: 'resourceUri',
+                // 	propertyUri: 'propertyUri',
+                // 	resourceValue: 'resourceValue'
+                // }, {
+                // 	datasetId: 'datasetId',
+                // 	name: 'name',
+                // 	resourceId: 'resourceId',
+                // 	resourceUri: 'resourceUri',
+                // 	propertyUri: 'propertyUri',
+                // 	resourceValue: 'resourceValue'
+                // }];
 
-				// enrichment.save(function(err, record) {
-				// 	console.log('record: ' + JSON.stringify(record, null, 4));
-				// 	// if (idx === files.length - 1) {
-				// 	res.send(201, record);
-				// 	// }
-				// });
-			}.bind(this, idx));
-		};
-	}
+                // enrichment.save(function(err, record) {
+                // 	console.log('record: ' + JSON.stringify(record, null, 4));
+                // 	// if (idx === files.length - 1) {
+                // 	res.send(201, record);
+                // 	// }
+                // });
+            }.bind(this, idx));
+        };
+    }
 };

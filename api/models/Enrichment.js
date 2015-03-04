@@ -18,7 +18,7 @@ module.exports = {
 			required: false
 		},
 
-		metadata: {
+		selectedItems: {
 			collection: 'enrichmentItems',
 			via: 'enrichment'
 		},
