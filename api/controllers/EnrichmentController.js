@@ -19,15 +19,21 @@ module.exports = {
 		for (var idx = 0; idx < files.length; idx++) {
 			var file = files[idx],
 				enrichmentInfo = {
-					originatingFile: file.path,
+					originatingFile: file.path, 
 					status: 'pending',
-					metadata: {}
+					session: file.session,
+					selectedItems: [],
+					availableItems: []
 				};
 
 			// The outside 'idx' is bound to the anonymous callback function in line 43
 			// to have the idx available for triggering the sending of the response.
 			Enrichment.create(enrichmentInfo, function(idx, err, enrichment) {
-				if (err) return next(err);
+				console.log('created enrichment');
+				if (err) {
+					console.log('error: ' + JSON.stringify(err, null, 4));
+					return next(err);
+				}
 
 				var ifcEnrichment = new IfcEnrichment();
 				ifcEnrichment.extractFromFile(enrichment, locationProperties);

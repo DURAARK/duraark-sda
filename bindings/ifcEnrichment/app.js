@@ -31,7 +31,7 @@ IfcEnrichment.prototype.extractFromFile = function(enrichmentRecord, locationPro
         fs.readFileSync(enrichmentFile).toString().split(/\r?\n/).forEach(function(line) {
             if ((line.length > 6) && (limiter > 0)) {
                 limiter -= 1;
-                console.log('limiter: ' + limiter);
+                // console.log('limiter: ' + limiter);
                 // line -> Dataset ID</td><td>Dataset name</td><td> Resource IDs</td><td> Resource URIs</td><td>
                 // Property URIs</td><td> and Resource Values</td></tr>
                 arr = line.split(",");
@@ -53,6 +53,7 @@ IfcEnrichment.prototype.extractFromFile = function(enrichmentRecord, locationPro
                     }
 
                     enrichmentRecord.availableItems.push(itemRecord);
+
                     // console.log('limiter: ' + limiter);
                     if (limiter === 0) { // FIXXME!!
                         // fs.deleteSync(enrichmentFile);
@@ -61,7 +62,7 @@ IfcEnrichment.prototype.extractFromFile = function(enrichmentRecord, locationPro
                         enrichmentRecord.status = 'finished';
 
                         enrichmentRecord.save(function(err, record) {
-                            console.log('[IfcEnrichment::extractFromFile] extracted metadata from file: ' + enrichmentRecord.originatingFile);
+                            // console.log('[IfcEnrichment::extractFromFile] extracted metadata from file: ' + enrichmentRecord.originatingFile);
                         });
                     }
                 });

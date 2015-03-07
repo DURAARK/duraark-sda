@@ -18,14 +18,10 @@ module.exports = {
 			required: false
 		},
 
-		metadata: {
-			collection: 'enrichmentItems',
-			via: 'enrichment'
-		},
+		selectedItems: 'array',
+		
+		availableItems: 'array',
 
-		availableItems: {
-			collection: 'enrichmentItems',
-			via: 'enrichment'
-		}
+		session: 'string'
 	}
 };
