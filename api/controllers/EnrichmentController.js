@@ -11,20 +11,21 @@ module.exports = {
 	extract: function(req, res, next) {
 		console.log('incoming request');
 		var files = req.params.all().files,
-			locationProperties = req.param('locationProperties') || 'IFCPOSTALADDRESS',
 			enrichments = [];
 
-		console.log('Initializing with location pivot hint: ' + locationProperties);
 
 		for (var idx = 0; idx < files.length; idx++) {
 			var file = files[idx],
 				enrichmentInfo = {
-					originatingFile: file.path, 
+					originatingFile: file.path,
 					status: 'pending',
 					session: file.session,
 					selectedItems: [],
 					availableItems: []
-				};
+				},
+				locationProperty = file.locationProperty || 'IFCPOSTALADDRESS';
+				
+			console.log('Initializing with location pivot hint: ' + locationProperty);
 
 			// The outside 'idx' is bound to the anonymous callback function in line 43
 			// to have the idx available for triggering the sending of the response.
@@ -36,7 +37,7 @@ module.exports = {
 				}
 
 				var ifcEnrichment = new IfcEnrichment();
-				ifcEnrichment.extractFromFile(enrichment, locationProperties);
+				ifcEnrichment.extractFromFile(enrichment, locationProperty);
 
 				enrichments.push(enrichment);
 
