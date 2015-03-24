@@ -12,4 +12,40 @@ A showcasing demo incorporating the service running on our [development system](
 
 The deployment setup is based on the repository [microservice-base](https://github.com/DURAARK/microservice-base). It provides development scripts and docker deployment. Have a look at the link to get more detailed information.
 
+## API Documentation
+
+The following API endpoints are available:
+
+### POST http://localhost:5005/enrichment/extract
+
+### Description
+
+Starts enrichment search based on a location property (or 'information seed').
+
+#### Payload
+
+```json  
+{
+  "locationProperties": "$PROPERTY"
+}
+```
+where $PROPERTY is one of
+* IFCPOSTALADDRESS
+* IFCBUILDING
+* IFCORGANIZATION
+
+#### Response
+
+```json
+[{
+	"datasetId": "datasetId",
+	"name": "name",
+	"resourceId": "esourceId",
+	"resourceUri": "resourceUri",
+	"propertyUri": "propertyUri",
+	"resourceValue": "resourceValue"
+}]
+```
+
 Enjoy!
+
