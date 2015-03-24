@@ -2,6 +2,8 @@
 
 This microservice provides an API to search for semantic enrichments in the open linked data cloud. The search is based on an 'information seed', that determines the focus of the information crawler. The result of this crawl is provided via a REST-API.
 
+A detailed description on its functionality can be found in the report [D3.4 Semantic Digital Interlinking and Clustering Prototype](http://duraark.eu/wp-content/uploads/2015/03/DURAARK_D3_4.pdf).
+
 ## Demo-Server
 
 A showcasing demo incorporating the service running on our [development system](http://juliet.cgv.tugraz.at). It is a development system, not a production one. You will always have the newest version running there, but it is also possible to experience bugs. A production demo will be available soon at http://workbench.duraark.eu. Currently we have the first prototype version running there.
