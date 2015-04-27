@@ -2,8 +2,8 @@
   "name": "duraark-microservice-base",
   "private": false,
   "version": "0.5.0",
-  "description": "Microservice providing a semantic enrichment API."
-  "keywords": ["duraark", "api", "microservice', "long-time-preservation", "sailsjs"],
+  "description": "Microservice providing a semantic enrichment API.",
+  "keywords": ["duraark", "api", "microservice", "long-time-preservation", "sailsjs"],
   "dependencies": {
     "ejs": "~0.8.4",
     "fs-extra": "^0.16.3",
