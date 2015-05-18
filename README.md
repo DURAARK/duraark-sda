@@ -18,29 +18,23 @@ The service allows a user to get related and relevant information out of the lin
 
 ## API Description
 
-The service provides the following endpoints:
+The service provides the following functionalities via endpoints:
 
-### POST http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/crawl
+### Initiate a crawl based on a seed list
 
 #### Description
 
-Performs a focused crawl based on a user defined 'seeds' list. A seed is a entity URI, e.g. FIXXME. Crawls can be initiated by different userss, the payload takes a integer ID to reference the 'user' the crawl is stored under (FIXXME: does the user have to be created; how do I create a user, if necessary; where do I get a list of available users, etc.). The 'depth' specifies FIXXME.
+Performs a focused crawl based on a user defined 'seeds' list. A seed is a entity URI, e.g. FIXXME. Crawls can be initiated by different users, the payload takes a integer ID to reference the 'user' the crawl is stored under (FIXXME: does the user have to be created; how do I create a user, if necessary; where do I get a list of available users, etc.). The 'depth' specifies FIXXME.
 
-### Parameters
+#### Example Request
+
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/crawl?seeds=http://dbpedia.org/ontology/largestCity&user=1&depth=1
+
+##### Parameters
 
 * 'seeds': An array of entity URIs
 * 'user': Integer ID referencing the user who initiated the crawl
 * 'depth': FIXXME
-
-#### Example Payload
-
-```json  
-{
-  "seeds": "FIXXME, FIXXME2",
-  "user": "1",
-  "depth": "1"
-}
-```
 
 #### Example Response
 
@@ -48,21 +42,87 @@ Performs a focused crawl based on a user defined 'seeds' list. A seed is a entit
 { FIXXME }
 ```
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadFinishedCrawls
+### List finished crawls
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadAllCrawls
+#### Description
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawlsBySeed
+FIXXME
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawlsBySeed
+#### Example Request
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/deleteCrawlConfiguration
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadFinishedCrawls
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawl
+#### Example Response
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/filterCrawlCandidates
+```json
+{
+	"crawl_configs":[
+		{
+			"crawl_id":1,
+			"crawl_comment":"",
+			"seeds":"http://dbpedia.org/resource/Wennigsen",
+			"hop":1,
+			"user_id":1,
+			"start_timestamp":"2015-05-13 14:19:48.0",
+			"end_timestamp":"2015-05-13 14:21:04.252",
+				},		{
+			"crawl_id":2,
+			"crawl_comment":"",
+			"seeds":"http://dbpedia.org/ontology/largestCity",
+			"hop":1,
+			"user_id":1,
+			"start_timestamp":"2015-05-18 15:37:07.0",
+			"end_timestamp":"2015-05-18 15:38:22.85",
+				}
+	]
+}
+```
 
-### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/exportToSDA
+##### Parameters
+
+* crawl_id: The ID of the crawl
+* crawl_comment: An (optional) comment for the crawl
+* seeds: The list of the crawl seeds
+* hop: FIXXME
+* user_id: Integer ID of the user who initiated the crawl
+* start_timestamp: Timestamp when the crawl was initiated
+* end_timestamp: Timestamp when the crawl was finished
+
+### List all crawls
+
+#### Example Request
+
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadAllCrawls
+
+### List all crawls filtered by a seed
+
+#### Example Request
+
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawlsBySeed
+
+### Delete a crawl
+
+#### Example Request
+
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/deleteCrawlConfiguration
+
+### Load candidate URIs for crawl
+
+#### Example Request
+
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawl
+
+### Filter crawl candidates
+
+#### Example Request
+
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/filterCrawlCandidates
+
+### Export a completed crawl to the SDA
+
+#### Example Request
+
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/exportToSDA
 
 Enjoy!
 
