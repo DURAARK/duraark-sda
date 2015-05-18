@@ -12,9 +12,13 @@ A showcasing demo incorporating the service running on our [demo system](http://
 
 The deployment setup is based on the repository [microservice-base](https://github.com/DURAARK/microservice-base). It provides development scripts and docker deployment. Have a look at the link to get more detailed information.
 
-## API Documentation
+## Purpose
 
-The following API endpoints are available:
+The service allows a user to get related and relevant information out of the linked data cloud for a list of specified topics. The topics are specified in a 'seed list'. A seed list is a FIXXME. Examples are: FIXXME.
+
+## API Description
+
+The service provides the following endpoints:
 
 ### POST http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/crawl
 
