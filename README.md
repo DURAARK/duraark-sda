@@ -1,12 +1,12 @@
 # microservice-semanticenrichment
 
-This microservice provides an API to search for semantic enrichments in the open linked data cloud. The search is based on an 'information seed', that determines the focus of the information crawler. The result of this crawl is provided via a REST-API.
+This microservice provides an API to search for semantic enrichments in the open linked data cloud. The search is based on an 'topic seed' determining the focus of the information crawler. The result of this crawl is provided via a REST-API.
 
-A detailed description on its functionality can be found in the report [D3.4 Semantic Digital Interlinking and Clustering Prototype](http://duraark.eu/wp-content/uploads/2015/03/DURAARK_D3_4.pdf).
+A detailed description on the internal functionality can be found in the report [D3.4 Semantic Digital Interlinking and Clustering Prototype](http://duraark.eu/wp-content/uploads/2015/03/DURAARK_D3_4.pdf).
 
 ## Demo-Server
 
-A showcasing demo incorporating the service running on our [development system](http://juliet.cgv.tugraz.at). It is a development system, not a production one. You will always have the newest version running there, but it is also possible to experience bugs. A production demo will be available soon at http://workbench.duraark.eu. Currently we have the first prototype version running there.
+A showcasing demo incorporating the service running on our [demo system](http://workbench.duraark.eu). The server provides a stable version, regarding a selected feature set. Bugs and errors can occur, please report them back to us, so that we can fix them.
 
 ## Setup & Installation
 
@@ -16,36 +16,49 @@ The deployment setup is based on the repository [microservice-base](https://gith
 
 The following API endpoints are available:
 
-### POST http://localhost:5005/enrichment/extract
+### POST http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/crawl
 
-### Description
+#### Description
 
-Starts enrichment search based on a location property (or 'information seed').
+Performs a focused crawl based on a user defined 'seeds' list. A seed is a entity URI, e.g. FIXXME. Crawls can be initiated by different userss, the payload takes a integer ID to reference the 'user' the crawl is stored under (FIXXME: does the user have to be created; how do I create a user, if necessary; where do I get a list of available users, etc.). The 'depth' specifies FIXXME.
 
-#### Payload
+### Parameters
+
+* 'seeds': An array of entity URIs
+* 'user': Integer ID referencing the user who initiated the crawl
+* 'depth': FIXXME
+
+#### Example Payload
 
 ```json  
 {
-  "locationProperties": "$PROPERTY"
+  "seeds": "FIXXME, FIXXME2",
+  "user": "1",
+  "depth": "1"
 }
 ```
-where $PROPERTY is one of
-* IFCPOSTALADDRESS
-* IFCBUILDING
-* IFCORGANIZATION
 
-#### Response
+#### Example Response
 
 ```json
-[{
-	"datasetId": "datasetId",
-	"name": "name",
-	"resourceId": "esourceId",
-	"resourceUri": "resourceUri",
-	"propertyUri": "propertyUri",
-	"resourceValue": "resourceValue"
-}]
+{ FIXXME }
 ```
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadFinishedCrawls
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadAllCrawls
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawlsBySeed
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawlsBySeed
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/deleteCrawlConfiguration
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawl
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/filterCrawlCandidates
+
+### GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/exportToSDA
 
 Enjoy!
 
