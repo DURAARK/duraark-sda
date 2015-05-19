@@ -9,9 +9,9 @@ var request = require('request'),
     path = require('path'),
     uuid = require('node-uuid');
 
-var _baseURL = 'http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/';
-
-var FocusedCrawler = module.exports = function() {}
+var FocusedCrawler = module.exports = function(opts) {
+    this.baseURL = opts.baseURL;
+}
 
 FocusedCrawler.prototype.enrich = function(crawlRecord) {
     console.log('[FocusedCrawler::enrich] crawl config: ' + JSON.stringify(crawlRecord, null, 4));
@@ -19,12 +19,13 @@ FocusedCrawler.prototype.enrich = function(crawlRecord) {
     crawlRecord.status = 'pending';
 
     var maxNumRetry = 10,
-        numRetry = 0;
+        numRetry = 0,
+        baseURL = this.baseURL;
 
     crawlRecord.save(function(err, record0) {
         var qs = crawlRecord.toJSON(),
-            crawlEndpoint = _baseURL + 'crawl',
-            loadCrawlEndpoint = _baseURL + 'loadCrawl';
+            crawlEndpoint = baseURL + 'crawl',
+            loadCrawlEndpoint = baseURL + 'loadCrawl';
 
         request({
             url: crawlEndpoint,

@@ -48,7 +48,9 @@ module.exports = {
                     return next(err);
                 }
 
-                var focusedCrawler = new FocusedCrawler();
+                var focusedCrawler = new FocusedCrawler({
+                    baseURL: 'http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/'
+                });
                 focusedCrawler.enrich(crawlRecord, config);
 
                 res.send(201, crawlRecord);
@@ -115,26 +117,26 @@ module.exports = {
                     // enrichment.status = 'finished';
 
                     // enrichment.metadata = [{
-                    // 	datasetId: 'datasetId',
-                    // 	name: 'name',
-                    // 	resourceId: 'resourceId',
-                    // 	resourceUri: 'resourceUri',
-                    // 	propertyUri: 'propertyUri',
-                    // 	resourceValue: 'resourceValue'
+                    //  datasetId: 'datasetId',
+                    //  name: 'name',
+                    //  resourceId: 'resourceId',
+                    //  resourceUri: 'resourceUri',
+                    //  propertyUri: 'propertyUri',
+                    //  resourceValue: 'resourceValue'
                     // }, {
-                    // 	datasetId: 'datasetId',
-                    // 	name: 'name',
-                    // 	resourceId: 'resourceId',
-                    // 	resourceUri: 'resourceUri',
-                    // 	propertyUri: 'propertyUri',
-                    // 	resourceValue: 'resourceValue'
+                    //  datasetId: 'datasetId',
+                    //  name: 'name',
+                    //  resourceId: 'resourceId',
+                    //  resourceUri: 'resourceUri',
+                    //  propertyUri: 'propertyUri',
+                    //  resourceValue: 'resourceValue'
                     // }];
 
                     // enrichment.save(function(err, record) {
-                    // 	console.log('record: ' + JSON.stringify(record, null, 4));
-                    // 	// if (idx === files.length - 1) {
-                    // 	res.send(201, record);
-                    // 	// }
+                    //  console.log('record: ' + JSON.stringify(record, null, 4));
+                    //  // if (idx === files.length - 1) {
+                    //  res.send(201, record);
+                    //  // }
                     // });
                 }.bind(this, idx));
             };
