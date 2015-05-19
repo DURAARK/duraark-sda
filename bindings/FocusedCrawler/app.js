@@ -35,9 +35,6 @@ FocusedCrawler.prototype.enrich = function(crawlRecord) {
                 return;
             }
 
-            var crawlId = 1; // FIXXME
-            // crawlId = body.id;
-
             // The crawl takes some time, depending on the parameters. We do interval
             // polling here to check if the data is already available:
             var intervalID = setInterval(function() {
@@ -45,7 +42,7 @@ FocusedCrawler.prototype.enrich = function(crawlRecord) {
                 request({
                     url: loadCrawlEndpoint,
                     qs: {
-                        crawl_id: crawlId
+                        crawl_id: response.id
                     }
                 }, function(err, response, body) {
                     if (err) {
