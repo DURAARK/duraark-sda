@@ -14,7 +14,7 @@ The deployment setup is based on the repository [microservice-base](https://gith
 
 ## Purpose
 
-The service allows a user to get related and relevant information out of the linked data cloud for a list of specified topics. The topics are specified in a 'seed list'. A seed list is a FIXXME. Examples are: FIXXME.
+The service allows a user to get related and relevant information out of the linked data cloud for a list of specified topics. The topics are specified in a 'seed list'. A seed list is a set of entity URIs coming usually from datasets like DBpedia or Freebase. Examples are: http://dbpedia.org/resource/Frank_Lloyd_Wright, http://dbpedia.org/resource/Imperial_Hotel,_Tokyo, http://dbpedia.org/resource/Johnson_Wax_Headquarters, representing a seed-list about the architect Frank Lloyd Wright and some of his famous buildings.
 
 ## API Description
 
@@ -24,29 +24,27 @@ The service provides the following functionalities via endpoints:
 
 #### Description
 
-Performs a focused crawl based on a user defined 'seeds' list. A seed is a entity URI, e.g. FIXXME. Crawls can be initiated by different users, the payload takes a integer ID to reference the 'user' the crawl is stored under (FIXXME: does the user have to be created; how do I create a user, if necessary; where do I get a list of available users, etc.). The 'depth' specifies FIXXME.
+Performs a focused crawl based on a user defined 'seeds' list. A seed is a entity URI, e.g. http://dbpedia.org/resource/Frank_Lloyd_Wright. Crawls can be initiated by different users, the payload takes a integer ID to reference the 'user' the crawl is stored under. The users will need to have rights to perform crawls. In the workbench we will provide a simple HTTP authentication for a pre-defined set of users. The 'depth' specifies the length of a path the crawler seeks to crawl entities, starting from the seed entities.
 
 #### Example Request
 
-GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/crawl?seeds=http://dbpedia.org/ontology/largestCity&user=1&depth=1
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/crawl?seeds=http://dbpedia.org/resource/Frank_Lloyd_Wright&user=1&depth=1
 
 ##### Parameters
 
 * 'seeds': An array of entity URIs
 * 'user': Integer ID referencing the user who initiated the crawl
-* 'depth': FIXXME
+* 'depth': the maximum path length for crawling entities from the given seed entities.
 
 #### Example Response
 
-```json
-{ FIXXME }
-```
+'Started crawling data for the seed list: http://dbpedia.org/resource/Frank_Lloyd_Wright for user id: 1 and it has a crawl id: crawl_id'
 
 ### List finished crawls
 
 #### Description
 
-FIXXME
+It provides an overview of the previously initiated crawls and those that are finished. This serves as a starting point to further analyze and process the crawled data for a given seed list.
 
 #### Example Request
 
@@ -83,7 +81,7 @@ GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadFinishedCrawls
 * crawl_id: The ID of the crawl
 * crawl_comment: An (optional) comment for the crawl
 * seeds: The list of the crawl seeds
-* hop: FIXXME
+* hop: path length for crawling entities from the seed entities
 * user_id: Integer ID of the user who initiated the crawl
 * start_timestamp: Timestamp when the crawl was initiated
 * end_timestamp: Timestamp when the crawl was finished
