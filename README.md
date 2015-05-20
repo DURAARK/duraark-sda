@@ -88,39 +88,55 @@ GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadFinishedCrawls
 
 ### List all crawls
 
+Outputs all the initiated crawls as JSON output based on the given JSON template above.
+
 #### Example Request
 
 GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadAllCrawls
 
 ### List all crawls filtered by a seed
 
+Outputs all the crawls that contain a particular seed entity in their configuration.
+
 #### Example Request
 
-GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawlsBySeed
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawlsBySeed?seed=Frank_Lloyd_Wright
 
 ### Delete a crawl
 
+Deletes an initiated crawl based on the crawl id which is found by first loading the list of all crawls.
+
 #### Example Request
 
-GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/deleteCrawlConfiguration
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/deleteCrawlConfiguration?crawl_id=CRAWL_ID
 
 ### Load candidate URIs for crawl
 
+For a specific crawl that is completed it loads the crawled candidate entities outputted as JSON on the template below.
+
+[
+   { "entity":"", "score":0}
+]
+
 #### Example Request
 
-GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawl
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawl?crawl_id=CRAWL_ID
 
 ### Filter crawl candidates
 
+After loading the candidates of a finished crawl one can filter out specific candidate entities. The filtering deletes all candidate entities that match a specific LIKE 'FILTERING_CRITERIA' SQL like filtering clause.
+
 #### Example Request
 
-GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/filterCrawlCandidates
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/filterCrawlCandidates?crawl_id=CRAWL_ID&crawl_filter=FILTER_CLAUSE
 
 ### Export a completed crawl to the SDA
 
+It exports the crawled candidate entities into the SDA under a specific graph URI following the pattern: "http://data.duraark.eu/crawl/CRAWL_ID"
+
 #### Example Request
 
-GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/exportToSDA
+GET http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/exportToSDA?crawl_id=CRAWL_ID
 
 Enjoy!
 
