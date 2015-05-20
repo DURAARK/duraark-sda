@@ -43,7 +43,8 @@ FocusedCrawler.prototype.enrich = function(crawlRecord) {
                 request({
                     url: loadCrawlEndpoint,
                     qs: {
-                        crawl_id: response.id
+                        // crawl_id: response.id
+                        crawl_id: 1 // FIXXME
                     }
                 }, function(err, response, body) {
                     if (err) {
@@ -53,15 +54,27 @@ FocusedCrawler.prototype.enrich = function(crawlRecord) {
                         return;
                     }
 
-                    if (typeof body.candidates !== 'undefined' && body.candidates.length) {
+                    if (typeof body !== 'undefined' && body.length) {
                         clearInterval(intervalID);
 
-                        record0.status = 'finished';
+                        var candidates = [];
 
-                        record0.save(function(err, record1) {
-                            console.log('Crawl is ready.');
-                        });
+                        try {
+                            candidates = JSON.parse(body);
 
+                            record0.candidates = JSON.parse(body);
+                            record0.status = 'finished';
+
+                            record0.save(function(err, record1) {
+                                console.log('Crawl is ready.');
+                            });
+                        } catch (e) {
+                            record0.status = 'error';
+
+                            record0.save(function(err, record1) {
+                                console.log('\nError parsing response from webservice:\n' + e);
+                            });
+                        }
                     } else {
                         numRetry++;
 

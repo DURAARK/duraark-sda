@@ -7,25 +7,28 @@
 
 module.exports = {
 
-	attributes: {
-		seeds: {
-			type: 'array',
-			required: true
-		},
+    attributes: {
+        seeds: {
+            type: 'array',
+            required: true
+        },
 
-		depth: {
-			type: 'string',
-			required: true
-		},
+        depth: {
+            type: 'string',
+            required: true
+        },
 
-		user: {
-			type: 'string',
-			required: true
-		},
+        user: {
+            type: 'string',
+            required: true
+        },
 
-		candidates: 'array',
+        candidates: {
+            type: 'array',
+            required: false
+        },
 
-		status: 'string'
-	}
+        status: 'string'
+    }
 
 };
