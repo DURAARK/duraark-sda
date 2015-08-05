@@ -1,0 +1,74 @@
+[
+  {
+    "type": "get",
+    "url": "/crawls/:id",
+    "title": "Get Crawl",
+    "version": "0.7.0",
+    "name": "GetCrawl",
+    "group": "Semantic_Enrichment",
+    "permission": [
+      {
+        "name": "none"
+      }
+    ],
+    "description": "<p>Retrieves a cached Crawl.</p> ",
+    "parameter": {
+      "fields": {
+        "Crawl": [
+          {
+            "group": "Crawl",
+            "type": "<p>Number</p> ",
+            "optional": false,
+            "field": "crawl_id",
+            "description": "<p>Unique ID of the crawl.</p> "
+          }
+        ]
+      }
+    },
+    "filename": "api/controllers/EnrichmentController.js",
+    "groupTitle": "Semantic_Enrichment"
+  },
+  {
+    "type": "post",
+    "url": "/crawls",
+    "title": "Start Crawl",
+    "version": "0.7.0",
+    "name": "PostCrawl",
+    "group": "Semantic_Enrichment",
+    "permission": [
+      {
+        "name": "none"
+      }
+    ],
+    "description": "<p>Starts a new enrichment crawl with the give topic seeds.</p> ",
+    "parameter": {
+      "fields": {
+        "Crawl": [
+          {
+            "group": "Crawl",
+            "type": "<p>Array</p> ",
+            "optional": false,
+            "field": "seeds",
+            "description": "<p>List of entity URIs defining the topic.</p> "
+          },
+          {
+            "group": "Crawl",
+            "type": "<p>Depth</p> ",
+            "optional": false,
+            "field": "Depth",
+            "description": "<p>of the Crawl.</p> "
+          },
+          {
+            "group": "Crawl",
+            "type": "<p>User</p> ",
+            "optional": false,
+            "field": "User",
+            "description": "<p>of the Crawl.</p> "
+          }
+        ]
+      }
+    },
+    "filename": "api/controllers/EnrichmentController.js",
+    "groupTitle": "Semantic_Enrichment"
+  }
+]
