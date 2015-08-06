@@ -10,7 +10,8 @@ var request = require('request'),
   uuid = require('node-uuid'),
   got = require('got'),
   querystring = require('querystring'),
-  Promise = require('bluebird');
+  Promise = require('bluebird'),
+  _ = require('underscore');
 
 var FocusedCrawler = module.exports = function(opts) {
   this.baseURL = opts.baseURL;
@@ -39,7 +40,14 @@ FocusedCrawler.prototype.enrich = function(crawlRecord, res) {
       console.log('crawl_id:' + response.crawl_id);
 
       checkCandidates(response.crawl_id).then(function(candidates) {
-        return res.send(candidates).status(200);
+      console.log('cand: ' + candidates.length);
+        var cand = candidates.slice(0,100);
+
+        console.log('ddddd: ' + cand.length);
+        _.sortBy(cand, 'score');
+        console.log(';asdfasdfasdf');
+
+        return res.send(cand).status(200);
       }).catch(function(err) {
         return res.send(err).status(500);
       });
@@ -62,7 +70,7 @@ function checkCandidates(crawl_id) {
         return setTimeout(function() {
           console.log('retrying');
           return checkCandidates(crawl_id);
-        }, 1000);
+        }, 1800000);
       }
     }).catch(function(err) {
       reject(err);
@@ -82,6 +90,7 @@ function getCrawlId(url) {
 }
 
 function getCandidates(crawl_id) {
+  // crawl_id = 13;
   return new Promise(function(resolve, reject) {
 
     var qs = querystring.stringify({
