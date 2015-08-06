@@ -10,4 +10,4 @@ DOCKERFILE=$(sed '6q;d' $SERVICEFILE)
 echo "Building docker image '$IMAGENAME' from Dockerfile located at '$DOCKERFILE':"
 echo "docker build -t $IMAGENAME $DOCKERFILE"
 
-docker build -t $IMAGENAME $DOCKERFILE
+docker build -t duraark-sda-v0.7.0 $DOCKERFILE

@@ -13,7 +13,7 @@ RUN sudo npm install sails -g
 COPY ./ /microservice
 WORKDIR /microservice
 
-EXPOSE 5006
+EXPOSE 5013
 
 RUN npm install
 
