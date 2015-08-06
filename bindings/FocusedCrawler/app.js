@@ -10,7 +10,8 @@ var request = require('request'),
   uuid = require('node-uuid'),
   got = require('got'),
   querystring = require('querystring'),
-  Promise = require('bluebird');
+  Promise = require('bluebird'),
+  _ = require('underscore');
 
 var FocusedCrawler = module.exports = function(opts) {
   this.baseURL = opts.baseURL;
@@ -21,9 +22,7 @@ FocusedCrawler.prototype.enrich = function(crawlRecord, res) {
 
   crawlRecord.status = 'pending';
 
-  var maxNumRetry = 10,
-    numRetry = 0,
-    baseURL = this.baseURL;
+  var baseURL = this.baseURL;
 
   crawlRecord.save(function(err, record0) {
     var qs = querystring.stringify(crawlRecord),
@@ -39,7 +38,11 @@ FocusedCrawler.prototype.enrich = function(crawlRecord, res) {
       console.log('crawl_id:' + response.crawl_id);
 
       checkCandidates(response.crawl_id).then(function(candidates) {
-        return res.send(candidates).status(200);
+        console.log('cand: ' + candidates.length);
+        var cand = candidates.slice(0, 100);
+        cand = _.sortBy(cand, 'score');
+        cand = cand.reverse();
+        return res.send(cand).status(200);
       }).catch(function(err) {
         return res.send(err).status(500);
       });
@@ -50,6 +53,9 @@ FocusedCrawler.prototype.enrich = function(crawlRecord, res) {
 function checkCandidates(crawl_id) {
   console.log('checking candidates: ' + crawl_id);
 
+  // var maxNumRetry = 2,
+    // numRetry = 0;
+
   return new Promise(function(resolve, reject) {
     return getCandidates(crawl_id).then(function(response) {
       console.log('response');
@@ -59,10 +65,17 @@ function checkCandidates(crawl_id) {
         console.log('CANDIDATES!!');
         return resolve(response);
       } else {
-        return setTimeout(function() {
-          console.log('retrying');
-          return checkCandidates(crawl_id);
-        }, 1000);
+        // if (numRetry < maxNumRetry) {
+          // console.log('retrying: ' + numRetry);
+          // console.log('maxNumRetry: ' + maxNumRetry);
+          // numRetry++;
+          setTimeout(function() {
+            checkCandidates(crawl_id);
+          // }, 1000);
+          }, 1800000);
+        // } else {
+        //   return reject('No candidates returned after ' + maxNumRetry + ' returns. Aborting ...');
+        // }
       }
     }).catch(function(err) {
       reject(err);
@@ -82,6 +95,7 @@ function getCrawlId(url) {
 }
 
 function getCandidates(crawl_id) {
+  // crawl_id = 13;
   return new Promise(function(resolve, reject) {
 
     var qs = querystring.stringify({

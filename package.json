@@ -32,7 +32,8 @@
     "rc": "~0.5.0",
     "request": "^2.55.0",
     "sails": "~0.10.2",
-    "sails-disk": "~0.10.0"
+    "sails-disk": "~0.10.0",
+    "underscore": "^1.8.3"
   },
   "scripts": {
     "start": "node app.js",
@@ -45,7 +46,6 @@
     "type": "git",
     "url": "git://github.com/DURAARK/duraark-sda.git"
   },
-
   "author": "Martin Hecher <martin.hecher@fraunhofer.at>",
   "license": "MIT",
   "devDependencies": {
@@ -73,10 +73,12 @@
     "name": "duraark",
     "email": "martin.hecher@fraunhofer.at"
   },
-  "maintainers": [{
-    "name": "duraark",
-    "email": "martin.hecher@fraunhofer.at"
-  }],
+  "maintainers": [
+    {
+      "name": "duraark",
+      "email": "martin.hecher@fraunhofer.at"
+    }
+  ],
   "dist": {
     "shasum": "56ac25d963d21367d9e6be3f672a3c75839e0693",
     "tarball": "http://registry.npmjs.org/duraark-microservice-base/-/duraark-microservice-base-0.2.5.tgz"
