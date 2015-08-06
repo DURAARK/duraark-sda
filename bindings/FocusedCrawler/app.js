@@ -51,14 +51,15 @@ function checkCandidates(crawl_id) {
   console.log('checking candidates: ' + crawl_id);
 
   return new Promise(function(resolve, reject) {
-    getCandidates(crawl_id).then(function(response) {
+    return getCandidates(crawl_id).then(function(response) {
+      console.log('response');
       response = JSON.parse(response);
-      console.log('gotresponse: ' + JSON.stringify(response, null, 4));
+      // console.log('gotresponse: ' + JSON.stringify(response, null, 4));
       if (response.length) {
         console.log('CANDIDATES!!');
         return resolve(response);
       } else {
-        setTimeout(function() {
+        return setTimeout(function() {
           console.log('retrying');
           return checkCandidates(crawl_id);
         }, 1000);
@@ -82,9 +83,9 @@ function getCrawlId(url) {
 
 function getCandidates(crawl_id) {
   return new Promise(function(resolve, reject) {
+
     var qs = querystring.stringify({
-      // crawl_id: response.crawl_id
-      crawl_id: 13
+      crawl_id: crawl_id
     });
 
     var loadCrawlEndpoint = 'http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawl';
