@@ -5,93 +5,112 @@
  */
 
 var request = require('request'),
-    fs = require('fs-extra'),
-    path = require('path'),
-    uuid = require('node-uuid');
+  fs = require('fs-extra'),
+  path = require('path'),
+  uuid = require('node-uuid'),
+  got = require('got'),
+  querystring = require('querystring'),
+  Promise = require('bluebird');
 
 var FocusedCrawler = module.exports = function(opts) {
-    this.baseURL = opts.baseURL;
+  this.baseURL = opts.baseURL;
 }
 
-FocusedCrawler.prototype.enrich = function(crawlRecord) {
-    console.log('[FocusedCrawler::enrich] crawl config: ' + JSON.stringify(crawlRecord, null, 4));
+FocusedCrawler.prototype.enrich = function(crawlRecord, res) {
+  console.log('[FocusedCrawler::enrich] crawl config: ' + JSON.stringify(crawlRecord, null, 4));
 
-    crawlRecord.status = 'pending';
+  crawlRecord.status = 'pending';
 
-    var maxNumRetry = 10,
-        numRetry = 0,
-        baseURL = this.baseURL;
+  var maxNumRetry = 10,
+    numRetry = 0,
+    baseURL = this.baseURL;
 
-    crawlRecord.save(function(err, record0) {
-        var qs = crawlRecord.toJSON(),
-            crawlEndpoint = baseURL + 'crawl',
-            loadCrawlEndpoint = baseURL + 'loadCrawl';
+  crawlRecord.save(function(err, record0) {
+    var qs = querystring.stringify(crawlRecord),
+      crawlEndpoint = baseURL + 'crawl',
+      loadCrawlEndpoint = baseURL + 'loadCrawl';
 
-        request({
-            url: crawlEndpoint,
-            qs: record0
-        }, function(err, response, body) {
-            if (err) {
-                console.log(err);
-                return;
-            }
+    var url = crawlEndpoint + '?' + qs;
+    console.log('crawlEndpoint: ' + url);
 
-            // The crawl takes some time, depending on the parameters. We do interval
-            // polling here to check if the data is already available:
-            var intervalID = setInterval(function() {
+    getCrawlId(url).then(function(response) {
+      response = JSON.parse(response);
 
-                request({
-                    url: loadCrawlEndpoint,
-                    qs: {
-                        // crawl_id: response.id
-                        crawl_id: 1 // FIXXME
-                    }
-                }, function(err, response, body) {
-                    if (err) {
-                        clearInterval(intervalID);
-                        console.log('Stopped interval polling due to internal error:')
-                        console.log(err);
-                        return;
-                    }
+      console.log('crawl_id:' + response.crawl_id);
 
-                    if (typeof body !== 'undefined' && body.length) {
-                        clearInterval(intervalID);
-
-                        var candidates = [];
-
-                        try {
-                            candidates = JSON.parse(body);
-
-                            record0.candidates = JSON.parse(body);
-                            record0.status = 'finished';
-
-                            record0.save(function(err, record1) {
-                                console.log('Crawl is ready.');
-                            });
-                        } catch (e) {
-                            record0.status = 'error';
-
-                            record0.save(function(err, record1) {
-                                console.log('\nError parsing response from webservice:\n' + e);
-                            });
-                        }
-                    } else {
-                        numRetry++;
-
-                        console.log('Crawl not yet ready. Retried ' + numRetry + ' time(s) | maxNumRetry: ' + maxNumRetry);
-
-                        if (maxNumRetry < numRetry) {
-                            clearInterval(intervalID);
-
-                            record0.status = 'error';
-
-                            record0.save(function(err, record1) {
-                                console.log('Reached maximum retry count. Aborting...');
-                            });
-                        }
-                    }
-                });
-            }, 2000);
-        });
+      checkCandidates(response.crawl_id).then(function(candidates) {
+        return res.send(candidates).status(200);
+      }).catch(function(err) {
+        return res.send(err).status(500);
+      });
     });
+  });
 }
+
+function checkCandidates(crawl_id) {
+  console.log('checking candidates: ' + crawl_id);
+
+  return new Promise(function(resolve, reject) {
+    getCandidates(crawl_id).then(function(response) {
+      response = JSON.parse(response);
+      console.log('gotresponse: ' + JSON.stringify(response, null, 4));
+      if (response.length) {
+        console.log('CANDIDATES!!');
+        return resolve(response);
+      } else {
+        setTimeout(function() {
+          console.log('retrying');
+          return checkCandidates(crawl_id);
+        }, 1000);
+      }
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+function getCrawlId(url) {
+  return new Promise(function(resolve, reject) {
+    got(url, function(err, response, body) {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(response);
+    });
+  });
+}
+
+function getCandidates(crawl_id) {
+  return new Promise(function(resolve, reject) {
+    var qs = querystring.stringify({
+      // crawl_id: response.crawl_id
+      crawl_id: 13
+    });
+
+    var loadCrawlEndpoint = 'http://asev.l3s.uni-hannover.de:9986/api/CrawlAPI/loadCrawl';
+    var url = loadCrawlEndpoint + '?' + qs;
+
+    console.log('loadCrawlEndpoint: ' + url);
+
+    got(url, function(err, response, body) {
+      if (err) return reject(err);
+      return resolve(response);
+    });
+  });
+}
+
+// else {
+//   numRetry++;
+//
+//   console.log('Crawl not yet ready. Retried ' + numRetry + ' time(s) | maxNumRetry: ' + maxNumRetry);
+//
+//   if (maxNumRetry < numRetry) {
+//     clearInterval(intervalID);
+//
+//     record0.status = 'error';
+//
+//     record0.save(function(err, record1) {
+//       console.log('Reached maximum retry count. Aborting...');
+//     });
+//   }
+// }

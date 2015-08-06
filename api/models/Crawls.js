@@ -29,8 +29,8 @@ module.exports = {
         // },
 
         crawl_id: {
-            type: 'number',
-            required: true
+            type: 'string',
+            required: false
         },
 
         status: 'string'

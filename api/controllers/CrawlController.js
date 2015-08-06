@@ -5,4 +5,8 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-module.exports = {};
+module.exports = {
+	create: function(req, res, next) {
+		console.log('Start focused crawling with parameters:')
+	}
+};

@@ -42,7 +42,7 @@ module.exports = {
 
             // The outside 'idx' is bound to the anonymous callback function in line 43
             // to have the idx available for triggering the sending of the response.
-            Crawl.create(config, function(idx, err, crawlRecord) {
+            Crawls.create(config, function(idx, err, crawlRecord) {
                 if (err) {
                     console.log('error: ' + JSON.stringify(err, null, 4));
                     return next(err);
