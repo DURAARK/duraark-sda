@@ -17,4 +17,4 @@ EXPOSE 5013
 
 RUN npm install
 
-ENTRYPOINT ["sails", "lift", "--prod"]
+CMD ["sails", "lift", "--prod"]
