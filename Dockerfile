@@ -10,8 +10,8 @@ RUN apt-get -y install nodejs -y
 RUN npm install sails nodemon -g
 
 # Bundle app, install, expose and finally run it
-COPY ./ /microservice
-WORKDIR /microservice
+COPY ./ /duraark/microservice
+WORKDIR /duraark/microservice
 
 EXPOSE 5013
 
