@@ -38,7 +38,7 @@ On the host you want to deploy the service execute the following steps (assuming
 
 ```js
 > git clone https://github.com/DURAARK/duraark-sda.git
-> cd duraark-sessions
+> cd duraark-sda
 > docker-compose up -d
 ```
 
