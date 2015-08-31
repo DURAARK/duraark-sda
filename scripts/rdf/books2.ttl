@@ -1,0 +1,6 @@
+@prefix:     <http://example.org/book/> .
+@prefix ns:  <http://example.org/ns#> .
+
+:book3  <http://purl.org/dc/elements/1.1/title>     "My Book" .
+:book3  ns:price     27 .
+:book3  ns:discount  0.1 .
