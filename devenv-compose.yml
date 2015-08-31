@@ -1,0 +1,8 @@
+duraark-sda:
+  # image: duraark/duraark-sda:0.7.0
+  build: .
+  command: nodemon --watch /duraark/microservice/api -w /duraark/microservice/config app.js
+  ports:
+    - "5013:5013"
+  volumes:
+    - .:/duraark/microservice
