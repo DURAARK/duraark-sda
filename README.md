@@ -12,7 +12,7 @@ A description on the provided functionality can be found in the reports [D2.5 So
 
 The service depends on the DURAARK component:
 
-* [Focused Crewler](https://github.com/bfetahu/focused_crawling)
+* [Focused Crawler](https://github.com/bfetahu/focused_crawling)
 
 ### Used By
 
