@@ -6,7 +6,7 @@ RUN DEBIAN_FRONTEND=noninteractive
 RUN apt-get install software-properties-common -y
 RUN add-apt-repository ppa:chris-lea/node.js -y
 RUN apt-get update -y
-RUN apt-get -y install nodejs -y
+RUN apt-get -y install nodejs curl -y
 RUN npm install sails nodemon -g
 
 # Bundle app, install, expose and finally run it

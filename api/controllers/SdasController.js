@@ -14,16 +14,19 @@ var jsonld = require('jsonld'),
 
 module.exports = {
   create: function(req, res) {
-    console.log('bind da');
+    var metadata = req.params.all(),
+      buildm = metadata.buildm;
 
-    var metadata = req.params.all();
+    // console.log('buildm: ' + JSON.stringify(buildm, null, 4));
+    console.log('id: ' + JSON.stringify(buildm['@id'], null, 4));
 
-    console.log('jsonld: ' + JSON.stringify(metadata, null, 4));
-
-    ensureId(metadata.buildm);
+    if (!buildm['@id']) {
+      var uri = generateURI(buildm);
+      buildm['@id'] = uri;
+    }
 
     // serialize a document to N-Quads (RDF)
-    jsonld.toRDF(metadata.buildm, {
+    jsonld.toRDF(buildm, {
       format: 'application/nquads'
     }, function(err, nquads) {
       if (err) {
@@ -31,22 +34,28 @@ module.exports = {
         return res.send(err).status(500);
       }
 
-      console.log('nquads:\n' + nquads);
+      // console.log('nquads:\n' + nquads);
 
       insertIntoSDAS(nquads).then(function() {
-        return res.send({
-          status: 'success'
-        }).status(200);
+        return res.send(buildm).status(200);
       });
     });
   }
 };
 
-function ensureId(jsonld) {
-	if (!jsonld['@id']) {
-		var id = 'http://fha.local/' + uuid.v4();
-		jsonld['@id'] = id;
-	}
+function generateURI(buildm) {
+  // console.log('type: ' + JSON.stringify(buildm['@type'], null, 4));
+
+  var type = 'duraark';
+
+  if (buildm['@type'] && buildm['@type'][0]) {
+    type = buildm['@type'][0].split('/').pop().toLowerCase();
+  }
+
+  var uri = 'http://data.duraark.eu/' + type + '_' + uuid.v4();
+  // console.log('uri: ' + uri);
+
+  return uri;
 }
 
 function insertIntoSDAS(nquads) {
@@ -55,17 +64,17 @@ function insertIntoSDAS(nquads) {
     var outputFile = path.join('/tmp', uuid.v4() + '.ttl');
     // outputFile = '/home/hecher/Projects/duraark-system/duraark-sda/scripts/rdf/books2.ttl';
 
-    console.log('outputFile: ' + outputFile);
+    console.log('RDF file to store: ' + outputFile);
 
     fs.writeFileSync(outputFile, nquads);
 
     try {
-			// FIXXME: read credentials and host from config file!
-      var args = '--digest --user dba:dba --url http://localhost:8890/sparql-graph-crud-auth?graph-uri=http://fha.local/playground -X POST -T ' + outputFile;
+      // FIXXME: read credentials and host from config file!
+      var args = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=http://fha.local/playground -X POST -T ' + outputFile;
 
       // console.log('args: ' + JSON.stringify(args.split(' '), null, 4));
 
-      console.log('[SdasController::insertIntoSDAS] about to run: "' + args + '"');
+      console.log('[SdasController::insertIntoSDAS] about to run: "curl ' + args + '"');
 
       var executable = spawn('curl', args.split(' '));
 
