@@ -35,7 +35,7 @@ module.exports = {
           },
           "longitude": {
             "type": "uri",
-            "value": "14"
+            "value": "15.3"
           },
           "description": {
             "type": "uri",
@@ -48,11 +48,11 @@ module.exports = {
           },
           "latitude": {
             "type": "uri",
-            "value": "47.1"
+            "value": "47"
           },
           "longitude": {
             "type": "uri",
-            "value": "14.1"
+            "value": "15.4"
           },
           "description": {
             "type": "uri",
@@ -65,11 +65,11 @@ module.exports = {
           },
           "latitude": {
             "type": "uri",
-            "value": "47.2"
+            "value": "47"
           },
           "longitude": {
             "type": "uri",
-            "value": "14.2"
+            "value": "15.5"
           },
           "description": {
             "type": "uri",
