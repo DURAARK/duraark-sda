@@ -1,0 +1,11 @@
+PREFIX duraark: <http://data.duraark.eu/vocab/buildm/>
+
+CONSTRUCT
+{
+    <http://data.duraark.eu/resource/0573892> ?p ?o .
+}
+FROM <http://data.duraark.eu/test_graph>
+WHERE
+{
+  <http://data.duraark.eu/resource/0573892> ?p ?o .
+}

@@ -1,0 +1,17 @@
+PREFIX duraark: <http://data.duraark.eu/vocab/buildm/>
+
+CONSTRUCT
+{
+  ?building a duraark:PhysicalAsset .
+  ?building duraark:latitude ?latitude .
+  ?building duraark:longitude ?longitude .
+  ?building duraark:name ?name
+}
+FROM <http://data.duraark.eu/test_graph>
+WHERE
+{
+  ?building a duraark:PhysicalAsset .
+  ?building duraark:latitude ?latitude .
+  ?building duraark:longitude ?longitude .
+  ?building duraark:name ?name
+}
