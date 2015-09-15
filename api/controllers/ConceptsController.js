@@ -67,24 +67,65 @@ module.exports = {
   physicalAsset: function(req, res) {
     console.log('request url: ' + req.url);
     var uri = req.param('uri'),
-    uriEscaped = escape(uri);
+      uriEscaped = escape(uri);
 
     console.log('[ConceptsController::physicalAsset] incoming request for: ' + uri);
 
     var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Chttp%3A%2F%2Fdata.duraark.eu%2Fresource%2F0648296%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld';
 
+    console.log('queryUrl:\n\n' + queryUrl);
+    
     request(queryUrl, function(err, response, body) {
       if (err) {
-        console.error(err);
+        console.log('ERROR: ' + err);
         return res.send(err).status(500);
       }
 
-      console.log('body: ' + body);
-      // return res.send(JSON.parse(body)).status(200);
-      return res.send(JSON.parse(body)).status(200);
+      // console.log('body: ' + body);
+
+      var jsonldVirtuoso = JSON.parse(body)[uri],
+        jsonld = {};
+
+      // console.log('jsonldVirtuoso: ' + JSON.stringify(jsonldVirtuoso, null, 4));
+
+      _.forEach(jsonldVirtuoso, function(property, key) {
+        jsonld[key] = property;
+
+        if (_.isArray(property)) {
+          property.forEach(function(item, key) {
+            if (item['value']) {
+              var tmp = item['value'];
+              item['@value'] = tmp;
+              delete item['value'];
+            }
+
+            if (item['datatype']) {
+              var tmp = item['datatype'];
+              item['@type'] = tmp;
+              delete item['datatype'];
+
+              if (item['type']) {
+                delete item['type'];
+              }
+            } else {
+              if (item['type']) {
+                var tmp = item['type'];
+                item['@type'] = tmp;
+                delete item['type'];
+              }
+            }
+          });
+        }
+      });
+
+      console.log('fixed JSON-LD: ' + JSON.stringify(jsonld, null, 4));
+
+      return res.send(jsonld).status(200);
     });
+
+
   }
-};
+}
 
 function generateURI(buildm) {
   // console.log('type: ' + JSON.stringify(buildm['@type'], null, 4));
