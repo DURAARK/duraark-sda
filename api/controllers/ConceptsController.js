@@ -11,12 +11,27 @@ var jsonld = require('jsonld'),
   request = require('request'),
   spawn = require('child_process').spawn,
   uuid = require('node-uuid'),
+  escape = require('escape-html'),
   path = require('path'),
   fs = require('fs');
 
 module.exports = {
   physicalAssets: function(req, res) {
     console.log('[ConceptsController::physicalAssets] incoming request');
+
+    // var buildm = {
+    //   'http://data.duraark.eu/vocab/buildm/name': [{
+    //     'value': 'Nygade'
+    //   }],
+    //   'http://data.duraark.eu/vocab/buildm/latitude': [{
+    //     'value': '15.3'
+    //   }],
+    //   'http://data.duraark.eu/vocab/buildm/longitude': [{
+    //     'value': '47'
+    //   }]
+    // };
+    //
+    // return res.send(buildm).status(200);
 
     // To receive JSON-LD we use this clumsy request url here, which encodes the
     // following SPARQL query:
@@ -35,7 +50,7 @@ module.exports = {
     //   ?building duraark:latitude ?latitude . \
     //   ?building duraark:longitude ?longitude \
     // }
-    var queryUrl = "http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld";
+    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D&should-sponge=&format=application%2Fjson-ld';
 
     request(queryUrl, function(err, response, body) {
       if (err) {
@@ -47,99 +62,27 @@ module.exports = {
       // return res.send(JSON.parse(body)).status(200);
       return res.send(JSON.parse(body)).status(200);
     });
+  },
 
-    // FIXXME: How to request json-ld response?
+  physicalAsset: function(req, res) {
+    console.log('request url: ' + req.url);
+    var uri = req.param('uri'),
+    uriEscaped = escape(uri);
 
-    // var client = new sparql.Client('http://data.duraark.eu/sparql'),
-    //   query = 'PREFIX duraark: <http://data.duraark.eu/vocab/buildm/> \
-    // CONSTRUCT \
-    // { \
-    //   ?building a duraark:PhysicalAsset . \
-    //   ?building duraark:latitude ?latitude . \
-    //   ?building duraark:longitude ?longitude \
-    // } \
-    // FROM <http://data.duraark.eu/test_graph> \
-    // WHERE \
-    // { \
-    //   ?building a duraark:PhysicalAsset . \
-    //   ?building duraark:latitude ?latitude . \
-    //   ?building duraark:longitude ?longitude \
-    // }';
-    //
-    // client.query(query, function(err, result) {
-    //   if (err) {
-    //     console.error(err);
-    //     return res.send(err).status(500);
-    //   }
-    //
-    //   console.log('result: ' + JSON.stringify(result, null, 4));
-    //
-    //   // var items = {
-    //   //   "head": {
-    //   //     "link": [],
-    //   //     "vars": ["label", "latitude", 'longitude', 'description']
-    //   //   },
-    //   //   "results": {
-    //   //     "distinct": false,
-    //   //     "ordered": true,
-    //   //     "bindings": [{
-    //   //       "label": {
-    //   //         "type": "uri",
-    //   //         "value": "Haus 30"
-    //   //       },
-    //   //       "latitude": {
-    //   //         "type": "uri",
-    //   //         "value": "47"
-    //   //       },
-    //   //       "longitude": {
-    //   //         "type": "uri",
-    //   //         "value": "15.3"
-    //   //       },
-    //   //       "description": {
-    //   //         "type": "uri",
-    //   //         "value": "The legendary Haus 30."
-    //   //       }
-    //   //     }, {
-    //   //       "label": {
-    //   //         "type": "uri",
-    //   //         "value": "Nygade"
-    //   //       },
-    //   //       "latitude": {
-    //   //         "type": "uri",
-    //   //         "value": "47"
-    //   //       },
-    //   //       "longitude": {
-    //   //         "type": "uri",
-    //   //         "value": "15.4"
-    //   //       },
-    //   //       "description": {
-    //   //         "type": "uri",
-    //   //         "value": "The legendary Nygade dataset."
-    //   //       }
-    //   //     }, {
-    //   //       "label": {
-    //   //         "type": "uri",
-    //   //         "value": "Bygade"
-    //   //       },
-    //   //       "latitude": {
-    //   //         "type": "uri",
-    //   //         "value": "47"
-    //   //       },
-    //   //       "longitude": {
-    //   //         "type": "uri",
-    //   //         "value": "15.5"
-    //   //       },
-    //   //       "description": {
-    //   //         "type": "uri",
-    //   //         "value": "The legendary Bygade dataset."
-    //   //       }
-    //   //     }],
-    //   //   }
-    //   // }
-    //   //
-    //   // items = result;
-    //   return res.send(result).status(200);
-    // });
+    console.log('[ConceptsController::physicalAsset] incoming request for: ' + uri);
+
+    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Chttp%3A%2F%2Fdata.duraark.eu%2Fresource%2F0648296%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld';
+
+    request(queryUrl, function(err, response, body) {
+      if (err) {
+        console.error(err);
+        return res.send(err).status(500);
+      }
+
+      console.log('body: ' + body);
+      // return res.send(JSON.parse(body)).status(200);
+      return res.send(JSON.parse(body)).status(200);
+    });
   }
 };
 

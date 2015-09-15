@@ -5,7 +5,8 @@ CONSTRUCT
   ?building a duraark:PhysicalAsset .
   ?building duraark:latitude ?latitude .
   ?building duraark:longitude ?longitude .
-  ?building duraark:name ?name
+  ?building duraark:name ?name .
+  ?building duraark:name ?description .
 }
 FROM <http://data.duraark.eu/test_graph>
 WHERE
@@ -13,5 +14,6 @@ WHERE
   ?building a duraark:PhysicalAsset .
   ?building duraark:latitude ?latitude .
   ?building duraark:longitude ?longitude .
-  ?building duraark:name ?name
+  ?building duraark:name ?name .
+  ?building duraark:name ?description .
 }
