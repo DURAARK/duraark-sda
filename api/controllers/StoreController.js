@@ -328,7 +328,7 @@ module.exports = {
       }).then(function(nquadsNew) {
         console.log('nquadsNew:\n\n' + JSON.stringify(nquadsNew, null, 4));
 
-        insertIntoSDAS(nquadsOriginal, nquadsNew).then(function() {
+        insertIntoSDAS(nquadsOriginal, nquadsNew, buildm['@id']).then(function() {
           return res.send(buildm).status(200);
         });
 
@@ -373,7 +373,7 @@ module.exports = {
   }
 }
 
-function insertIntoSDAS(nquadsOriginal, nquadsNew) {
+function insertIntoSDAS(nquadsOriginal, nquadsNew, graphURI) {
   return new Promise(function(resolve, reject) {
 
     var outputFile = path.join('/tmp', uuid.v4() + '.ttl'),
@@ -387,9 +387,15 @@ function insertIntoSDAS(nquadsOriginal, nquadsNew) {
     fs.writeFileSync(outputFileOriginal, nquadsOriginal);
 
     try {
+      var aNeiaGraph = 'http://data.duraark.eu/graph_' + graphURI.split('/').pop();
       // FIXXME: read credentials and host from config file!
-      var insertArgs = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=http://data.duraark.eu/test_graph -X POST -T ' + outputFile,
-        deleteArgs = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=http://data.duraark.eu/test_graph -X DELETE -T ' + outputFileOriginal;
+      var insertArgs = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=' + aNeiaGraph + ' -X POST -T ' + outputFile,
+        deleteArgs = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=' + aNeiaGraph + ' -X DELETE';
+
+      console.log('aNeiaGraph: ' + aNeiaGraph);
+
+      // var insertArgs = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=http://data.duraark.eu/test_graph -X POST -T ' + outputFile,
+      //   deleteArgs = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=http://data.duraark.eu/test_graph -X DELETE -T ' + outputFileOriginal;
 
       // console.log('args: ' + JSON.stringify(args.split(' '), null, 4));
 
@@ -412,6 +418,7 @@ function insertIntoSDAS(nquadsOriginal, nquadsNew) {
           return reject('[SdasController::insertIntoSDAS] ERROR: exited with code: \n\n' + code + '\n');
         }
 
+        resolve();
         console.log('[SdasController::insertIntoSDAS]     ... finished');
         var executable = spawn('curl', insertArgs.split(' '));
 
@@ -422,7 +429,7 @@ function insertIntoSDAS(nquadsOriginal, nquadsNew) {
         executable.stderr.on('data', function(err) {
           console.log(err.toString());
           //  return reject('[SdasController::insertIntoSDAS] ERROR during program execution:\n\n' + err);
-        });
+        })
 
         executable.on('close', function(code) {
           if (code !== 0) { // 'e57metadata' return '1' on success
