@@ -50,7 +50,8 @@ module.exports = {
     //   ?building duraark:latitude ?latitude . \
     //   ?building duraark:longitude ?longitude \
     // }
-    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D&should-sponge=&format=application%2Fjson-ld';
+    // var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D&should-sponge=&format=application%2Fjson-ld';
+    var queryUrl = 'http://duraark-sdas:8890/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D&should-sponge=&format=application%2Fjson-ld';
 
     request(queryUrl, function(err, response, body) {
       if (err) {
@@ -58,8 +59,10 @@ module.exports = {
         return res.send(err).status(500);
       }
 
-      console.log('body: ' + body);
-      // return res.send(JSON.parse(body)).status(200);
+      // console.log('body: ' + body);
+
+      var jsonld = _fixVirtuosoJsonLD(body);
+
       return res.send(JSON.parse(body)).status(200);
     });
   },
@@ -71,60 +74,68 @@ module.exports = {
 
     console.log('[ConceptsController::physicalAsset] incoming request for: ' + uri);
 
-    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Chttp%3A%2F%2Fdata.duraark.eu%2Fresource%2F0648296%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld';
+    // var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Chttp%3A%2F%2Fdata.duraark.eu%2Fresource%2F0648296%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld';
+    var queryUrl = 'http://duraark-sdas:8890/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Chttp%3A%2F%2Fdata.duraark.eu%2Fresource%2F0648296%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld';
 
     console.log('queryUrl:\n\n' + queryUrl);
-    
+
     request(queryUrl, function(err, response, body) {
       if (err) {
         console.log('ERROR: ' + err);
         return res.send(err).status(500);
       }
 
-      // console.log('body: ' + body);
+      console.log('body: ' + body);
 
-      var jsonldVirtuoso = JSON.parse(body)[uri],
-        jsonld = {};
+var tmp = JSON.parse(body);
 
-      // console.log('jsonldVirtuoso: ' + JSON.stringify(jsonldVirtuoso, null, 4));
-
-      _.forEach(jsonldVirtuoso, function(property, key) {
-        jsonld[key] = property;
-
-        if (_.isArray(property)) {
-          property.forEach(function(item, key) {
-            if (item['value']) {
-              var tmp = item['value'];
-              item['@value'] = tmp;
-              delete item['value'];
-            }
-
-            if (item['datatype']) {
-              var tmp = item['datatype'];
-              item['@type'] = tmp;
-              delete item['datatype'];
-
-              if (item['type']) {
-                delete item['type'];
-              }
-            } else {
-              if (item['type']) {
-                var tmp = item['type'];
-                item['@type'] = tmp;
-                delete item['type'];
-              }
-            }
-          });
-        }
-      });
+      console.log('tmp: ' + JSON.stringify(tmp, null, 4));
+      var jsonld = _fixVirtuosoJsonLD(tmp[uri]);
 
       console.log('fixed JSON-LD: ' + JSON.stringify(jsonld, null, 4));
 
       return res.send(jsonld).status(200);
     });
-
-
   }
+}
+
+function _fixVirtuosoJsonLD(virtuosoJsonLD) {
+  var wrong = virtuosoJsonLD,
+    jsonld = {};
+
+  console.log('jsonldVirtuoso: ' + JSON.stringify(wrong, null, 4));
+
+  _.forEach(wrong, function(property, key) {
+    jsonld[key] = property;
+
+    if (_.isArray(property)) {
+      property.forEach(function(item, key) {
+        if (item['value']) {
+          var tmp = item['value'];
+          item['@value'] = tmp;
+          delete item['value'];
+        }
+
+        if (item['datatype']) {
+          var tmp = item['datatype'];
+          item['@type'] = tmp;
+          delete item['datatype'];
+
+          if (item['type']) {
+            delete item['type'];
+          }
+        } else {
+          if (item['type']) {
+            var tmp = item['type'];
+            item['@type'] = tmp;
+            delete item['type'];
+          }
+        }
+      });
+    }
+  });
+
+  return jsonld;
 }
 
 function generateURI(buildm) {
