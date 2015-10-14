@@ -94,7 +94,7 @@ function getCrawlId(url) {
   });
 }
 
-function getCandidates(crawl_id) {
+FocusedCrawler.prototype.loadCrawl = function(crawl_id) {
   // crawl_id = 13;
   return new Promise(function(resolve, reject) {
 
