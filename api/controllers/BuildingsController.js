@@ -49,6 +49,10 @@ module.exports = {
     console.log('[duraark-sda] POST /buildings/filter');
     _.forEach(filters, function(filter) {
       console.log('[duraark-sda]       * filter: ' + JSON.stringify(filter, null, 4));
+
+      // filter.addressCountry.push('AT');
+      // filter.addressCountry.push('DE');
+      // filter.addressCountry.push('GR');
     });
 
     if (!filters || !filters.length) {
@@ -64,20 +68,23 @@ module.exports = {
       var property = Object.keys(filter)[0];
       console.log('property: ' + property);
       _.forEach(filter[property], function(value, idx) {
-        console.log('value: ' + value + ' | idx: ' + filters.length);
+        console.log('value: ' + value);
         if (idx === 0) {
-          if (filters.length !== 1) {
+          if (filter.length !== 1) {
             queryUrl += '{';
           }
-          queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
-          if (filters.length !== 1) {
+          queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>';
+          if (filter.length !== 1) {
             queryUrl += '}';
           }
         } else {
           queryUrl += '+UNION+{';
-          queryUrl += '?result+build:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
+          queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
         }
-      })
+      });
+      if (filter.length !== 1) {
+        queryUrl += '}';
+      }
     });
     queryUrl += '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
 
