@@ -12,6 +12,9 @@ module.exports = {
   find: function(req, res, next) {
     var props = req.param('props');
     console.log('[duraark-sda] GET /buildings');
+    console.log('[duraark-sda]\n');
+    console.log(JSON.stringify(props, null, 4));
+
     _.forEach(props, function(prop) {
       console.log('[duraark-sda]       * prop: ' + prop);
     });
@@ -20,6 +23,7 @@ module.exports = {
       throw Error('[duraark-sda] GET /buildings ERROR: no "props" array present in request, aborting ...');
       return res.send('Please provide a "props" array with at least one property').status(500);
     }
+
     var prop = props[0];
     var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0Aselect+distinct+%3Fresult+where+%7B%0D%0A%3Fs+buildm%3A' + prop + '+%3Fresult%0D%0A%7D+LIMIT+100&should-sponge=&format=application%2Fsparql-results%2Bjson'
     request(queryUrl, function(err, response, body) {
@@ -54,24 +58,30 @@ module.exports = {
 
     // FIXXME: use 'sparql' library for that!
     var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0Aselect+distinct+';
-    queryUrl += '%3Fresult+where+%7B%0D%0A++%7B';
+    queryUrl += '?result+where+{';
 
     _.forEach(filters, function(filter) {
       var property = Object.keys(filter)[0];
       console.log('property: ' + property);
       _.forEach(filter[property], function(value, idx) {
-        console.log('value: ' + value + ' | idx: ' + idx);
+        console.log('value: ' + value + ' | idx: ' + filters.length);
         if (idx === 0) {
-          queryUrl += '%3Fresult+buildm%3A' + property + '+%22' + value + '%22%5E%5E%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23int%3E+%7D%0D%0A+++';
+          if (filters.length !== 1) {
+            queryUrl += '{';
+          }
+          queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
+          if (filters.length !== 1) {
+            queryUrl += '}';
+          }
         } else {
-          queryUrl += '+UNION+%7B+';
-          queryUrl += '%3Fresult+buildm%3A' + property + '+%22' + value + '%22%5E%5E%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23string%3E+%7D+';
+          queryUrl += '+UNION+{';
+          queryUrl += '?result+build:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
         }
       })
     });
-    queryUrl += '.%7D&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
+    queryUrl += '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
 
-    console.log('queryUrl: ' + queryUrl);
+    console.log('queryUrl: ' + encodeURI(queryUrl));
 
     request(queryUrl, function(err, response, body) {
       if (err) {
