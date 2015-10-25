@@ -62,7 +62,7 @@ module.exports = {
 
     // FIXXME: use 'sparql' library for that!
     var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0Aselect+distinct+';
-    queryUrl += '?result+where+{';
+    queryUrl += '?url+?lat+?lng+where+{';
 
     var abort = false;
 
@@ -76,13 +76,17 @@ module.exports = {
             if (filter.length !== 1) {
               queryUrl += '{';
             }
-            queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>';
+            queryUrl += '?url+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string> ;';
+            queryUrl += 'buildm:latitude ?lat ;';
+            queryUrl += 'buildm:longitude ?lng .';
             if (filter.length !== 1) {
               queryUrl += '}';
             }
           } else {
             queryUrl += '+UNION+{';
-            queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
+            queryUrl += '?url+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string> ;';
+            queryUrl += 'buildm:latitude ?lat ;';
+            queryUrl += 'buildm:longitude ?lng . }';
           }
         });
         if (filter.length !== 1) {
