@@ -9,7 +9,7 @@ var _ = require('underscore'),
   request = require('request');
 
 module.exports = {
-  find: function(req, res, next) {
+  create: function(req, res, next) {
     var props = req.param('props');
     console.log('[duraark-sda] GET /buildings');
     console.log('[duraark-sda]\n');
@@ -55,7 +55,7 @@ module.exports = {
       // filter.addressCountry.push('GR');
     });
 
-    if (!filters || !filters.length) {
+    if (!filters || !Object.keys(filters).length) {
       throw Error('[duraark-sda] POST /buildings ERROR: no "filters" array present in request, aborting ...');
       return res.send('Please provide a "filters" object with at least one filter property').status(500);
     }
@@ -64,47 +64,73 @@ module.exports = {
     var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0Aselect+distinct+';
     queryUrl += '?result+where+{';
 
+    var abort = false;
+
     _.forEach(filters, function(filter) {
       var property = Object.keys(filter)[0];
       console.log('property: ' + property);
-      _.forEach(filter[property], function(value, idx) {
-        console.log('value: ' + value);
-        if (idx === 0) {
-          if (filter.length !== 1) {
-            queryUrl += '{';
+      if (filter[property].length) {
+        _.forEach(filter[property], function(value, idx) {
+          console.log('value: ' + value);
+          if (idx === 0) {
+            if (filter.length !== 1) {
+              queryUrl += '{';
+            }
+            queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>';
+            if (filter.length !== 1) {
+              queryUrl += '}';
+            }
+          } else {
+            queryUrl += '+UNION+{';
+            queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
           }
-          queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>';
-          if (filter.length !== 1) {
-            queryUrl += '}';
-          }
-        } else {
-          queryUrl += '+UNION+{';
-          queryUrl += '?result+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string>}';
+        });
+        if (filter.length !== 1) {
+          queryUrl += '}';
         }
+      } else {
+        if (Object.keys(filters).length === 1) {
+          var emtpyResult = {
+            "head": {
+              "link": [],
+              "vars": ["result"]
+            },
+            "results": {
+              "distinct": false,
+              "ordered": true,
+              "bindings": []
+            }
+          };
+          console.log('SEND');
+          abort = true;
+          return res.send(emtpyResult).status(200);
+        }
+      }
+    });
+
+    // FIXXME: somehow this code is reached, even if the return of the 'emptyResult' is executed above.
+    // Check the code path to eventually remove the 'abort' workaround!
+    if (!abort) {
+      queryUrl += '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
+
+      console.log('queryUrl: ' + encodeURI(queryUrl));
+
+      request(queryUrl, function(err, response, body) {
+        if (err) {
+          console.log('[duraark-sda] GET /buildings/filter ERROR: error requesting data from "http://data.duraark.eu" ...');
+          console.log('[duraark-sda]    requested URL:');
+          console.log('[duraark-sda] ' + queryUrl);
+
+          return res.send(err).status(500);
+        }
+
+        console.log('body: ' + body);
+
+        var jsonld = _fixVirtuosoJsonLD(body);
+
+        return res.send(JSON.parse(body)).status(200);
       });
-      if (filter.length !== 1) {
-        queryUrl += '}';
-      }
-    });
-    queryUrl += '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
-
-    console.log('queryUrl: ' + encodeURI(queryUrl));
-
-    request(queryUrl, function(err, response, body) {
-      if (err) {
-        console.log('[duraark-sda] GET /buildings/filter ERROR: error requesting data from "http://data.duraark.eu" ...');
-        console.log('[duraark-sda]    requested URL:');
-        console.log('[duraark-sda] ' + queryUrl);
-
-        return res.send(err).status(500);
-      }
-
-      console.log('body: ' + body);
-
-      var jsonld = _fixVirtuosoJsonLD(body);
-
-      return res.send(JSON.parse(body)).status(200);
-    });
+    }
   }
 };
 
