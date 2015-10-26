@@ -24,8 +24,24 @@ module.exports = {
       return res.send('Please provide a "props" array with at least one property').status(500);
     }
 
-    var prop = props[0];
-    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0Aselect+distinct+%3Fresult+where+%7B%0D%0A%3Fs+buildm%3A' + prop + '+%3Fresult%0D%0A%7D+LIMIT+100&should-sponge=&format=application%2Fsparql-results%2Bjson'
+    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0A';
+
+    queryUrl += 'select+distinct+';
+
+    _.forEach(props, function(prop) {
+      queryUrl += '+?' + prop;
+    });
+
+    queryUrl += '+where+{';
+
+    _.forEach(props, function(prop) {
+      queryUrl += '?building+buildm:' + prop + '+?' + prop + ' .';
+    });
+
+    queryUrl += '}&should-sponge=&format=application%2Fsparql-results%2Bjson';
+
+    console.log('queryUrl: ' + queryUrl);
+
     request(queryUrl, function(err, response, body) {
       if (err) {
         console.log('[duraark-sda] GET /buildings ERROR: error requesting data from "http://data.duraark.eu" ...');
