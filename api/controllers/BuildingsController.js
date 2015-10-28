@@ -21,32 +21,34 @@ module.exports = {
 
     if (!props || !props.length) {
       throw Error('[duraark-sda] GET /buildings ERROR: no "props" array present in request, aborting ...');
-      return res.send('Please provide a "props" array with at least one property').status(500);
+      return res.send('Please provide a "props" array with at least one predicate').status(500);
     }
 
-    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0A';
+    // var sparqlQuery = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0A';
+    var sparqlQuery = 'http://duraark-sdas:8890/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0A';
 
-    queryUrl += 'select+distinct+';
-
-    _.forEach(props, function(prop) {
-      queryUrl += '+?' + prop;
-    });
-
-    queryUrl += '+where+{';
+    sparqlQuery += 'select+distinct+';
 
     _.forEach(props, function(prop) {
-      queryUrl += '?building+buildm:' + prop + '+?' + prop + ' .';
+      sparqlQuery += '+?' + prop;
     });
 
-    queryUrl += '}&should-sponge=&format=application%2Fsparql-results%2Bjson';
+    sparqlQuery += '+where+{';
 
-    console.log('queryUrl: ' + queryUrl);
+    _.forEach(props, function(prop) {
+      sparqlQuery += '?building+buildm:' + prop + '+?' + prop + ' .';
+    });
 
-    request(queryUrl, function(err, response, body) {
+    sparqlQuery += '}&should-sponge=&format=application%2Fsparql-results%2Bjson';
+
+    console.log('sparqlQuery: ' + sparqlQuery);
+
+    request(sparqlQuery, function(err, response, body) {
       if (err) {
-        console.log('[duraark-sda] GET /buildings ERROR: error requesting data from "http://data.duraark.eu" ...');
+        console.log('[duraark-sda] GET /buildings: error requesting data from "http://data.duraark.eu" ...');
         console.log('[duraark-sda]    requested URL:');
-        console.log('[duraark-sda] ' + queryUrl);
+        console.log('[duraark-sda] ' + sparqlQuery);
+        console.log('[duraark-sda] ERROR:' + err);
 
         return res.send(err).status(500);
       }
@@ -60,91 +62,87 @@ module.exports = {
   },
 
   filter: function(req, res, next) {
-    var filters = req.param('filters');
+    var filters = req.param('filters').filters; //?
 
     console.log('[duraark-sda] POST /buildings/filter');
-    _.forEach(filters, function(filter) {
-      console.log('[duraark-sda]       * filter: ' + JSON.stringify(filter, null, 4));
 
-      // filter.addressCountry.push('AT');
-      // filter.addressCountry.push('DE');
-      // filter.addressCountry.push('GR');
-    });
-
-    if (!filters || !Object.keys(filters).length) {
+    if (!filters) {
       throw Error('[duraark-sda] POST /buildings ERROR: no "filters" array present in request, aborting ...');
-      return res.send('Please provide a "filters" object with at least one filter property').status(500);
+      return res.send('Please provide a "filters" object with at least one filter predicate').status(500);
     }
 
+    _.forEach(filters, function(filter) {
+      console.log('[duraark-sda]  * filter: ' + JSON.stringify(filter, null, 4));
+    });
+
     // FIXXME: use 'sparql' library for that!
-    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0Aselect+distinct+';
-    queryUrl += '?url+?lat+?lng+where+{';
+    // var sparqlQuery = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0Aselect+distinct+';
+    var sparqlQuery = 'PREFIX buildm: <http://data.duraark.eu/vocab/buildm/> ';
+    sparqlQuery += 'select distinct ?url ?lat ?lng where {';
 
     var abort = false;
 
     _.forEach(filters, function(filter) {
-      var property = Object.keys(filter)[0];
-      console.log('property: ' + property);
-      if (filter[property].length) {
-        _.forEach(filter[property], function(value, idx) {
-          console.log('value: ' + value);
-          if (idx === 0) {
-            if (filter.length !== 1) {
-              queryUrl += '{';
+      var predicate = filter.predicate;
+      if (predicate !== 'type') {
+        console.log('predicate: ' + predicate + ' | type: ' + filter.type);
+        if (filter.values.length) {
+          _.forEach(filter.values, function(value, idx) {
+            console.log('value: ' + value);
+            if (idx === 0) {
+              if (filter.length !== 1) {
+                sparqlQuery += '{';
+              }
+              sparqlQuery += '?url buildm:' + predicate + ' "' + value + '"^^<' + filter.type + '> .';
+              sparqlQuery += ' OPTIONAL { ?url buildm:latitude ?lat } .';
+              sparqlQuery += ' OPTIONAL { ?url buildm:longitude ?lng } .';
+            } else {
+              sparqlQuery += ' } UNION {';
+              sparqlQuery += '?url buildm:' + predicate + ' "' + value + '"^^<' + filter.type + '> .';
+              sparqlQuery += ' OPTIONAL { ?url buildm:latitude ?lat } .';
+              sparqlQuery += ' OPTIONAL { ?url buildm:longitude ?lng }';
             }
-            queryUrl += '?url+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string> ;';
-            queryUrl += 'buildm:latitude ?lat ;';
-            queryUrl += 'buildm:longitude ?lng .';
-            if (filter.length !== 1) {
-              queryUrl += '}';
-            }
-          } else {
-            queryUrl += '+UNION+{';
-            queryUrl += '?url+buildm:' + property + '+"' + value + '"^^<http://www.w3.org/2001/XMLSchema%23string> ;';
-            queryUrl += 'buildm:latitude ?lat ;';
-            queryUrl += 'buildm:longitude ?lng . }';
+          });
+        } else {
+          if (Object.keys(filters).length === 1) {
+            var emtpyResult = {
+              "head": {
+                "link": [],
+                "vars": ["result"]
+              },
+              "results": {
+                "distinct": false,
+                "ordered": true,
+                "bindings": []
+              }
+            };
+            console.log('SEND EMPTY RESULT');
+            abort = true;
+            return res.send(emtpyResult).status(200);
           }
-        });
-        if (filter.length !== 1) {
-          queryUrl += '}';
-        }
-      } else {
-        if (Object.keys(filters).length === 1) {
-          var emtpyResult = {
-            "head": {
-              "link": [],
-              "vars": ["result"]
-            },
-            "results": {
-              "distinct": false,
-              "ordered": true,
-              "bindings": []
-            }
-          };
-          console.log('SEND');
-          abort = true;
-          return res.send(emtpyResult).status(200);
         }
       }
     });
 
+    sparqlQuery += '}}';
+
     // FIXXME: somehow this code is reached, even if the return of the 'emptyResult' is executed above.
     // Check the code path to eventually remove the 'abort' workaround!
     if (!abort) {
-      queryUrl += '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
+      var url = 'http://duraark-sdas:8890/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=' + encodeURIComponent(sparqlQuery) + '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
+      // var url = 'http://duraark-sdas:8890/sparql?' + sparqlQuery + '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
+      console.log('url: ' + url);
 
-      console.log('queryUrl: ' + encodeURI(queryUrl));
-
-      request(queryUrl, function(err, response, body) {
+      request(url, function(err, response, body) {
         if (err) {
           console.log('[duraark-sda] GET /buildings/filter ERROR: error requesting data from "http://data.duraark.eu" ...');
           console.log('[duraark-sda]    requested URL:');
-          console.log('[duraark-sda] ' + queryUrl);
+          console.log('[duraark-sda] ' + sparqlQuery);
 
           return res.send(err).status(500);
         }
 
-        console.log('body: ' + body);
+        // console.log('body: ' + body);
 
         var jsonld = _fixVirtuosoJsonLD(body);
 
@@ -160,11 +158,11 @@ function _fixVirtuosoJsonLD(virtuosoJsonLD) {
 
   // console.log('jsonldVirtuoso: ' + JSON.stringify(wrong, null, 4));
 
-  _.forEach(wrong, function(property, key) {
-    jsonld[key] = property;
+  _.forEach(wrong, function(predicate, key) {
+    jsonld[key] = predicate;
 
-    if (_.isArray(property)) {
-      property.forEach(function(item, key) {
+    if (_.isArray(predicate)) {
+      predicate.forEach(function(item, key) {
         if (item['value']) {
           var tmp = item['value'];
           item['@value'] = tmp;
