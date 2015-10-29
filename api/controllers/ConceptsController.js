@@ -52,9 +52,8 @@ module.exports = {
     // }
     // var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D&should-sponge=&format=application%2Fjson-ld';
 
-    // var queryUrl = 'http://duraark-sdas:8890/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D&should-sponge=&format=application%2Fjson-ld';
-    // var queryUrl = 'http://duraark-sdas:8890/sparql?query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
-    var queryUrl = 'http://data.duraark.eu/sparql?query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
+    // var queryUrl = 'http://data.duraark.eu/sparql?query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
+    var queryUrl = 'http://duraark-sdas:8890/sparql?query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3Fbuilding+a+duraark%3APhysicalAsset+.%0D%0A++%3Fbuilding+duraark%3Alatitude+%3Flatitude+.%0D%0A++%3Fbuilding+duraark%3Alongitude+%3Flongitude+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fname+.%0D%0A++%3Fbuilding+duraark%3Aname+%3Fdescription+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
 
     request(queryUrl, function(err, response, body) {
       if (err) {
@@ -77,10 +76,8 @@ module.exports = {
 
     console.log('[ConceptsController::physicalAsset] incoming request for: ' + uri);
 
-    // var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Chttp%3A%2F%2Fdata.duraark.eu%2Fresource%2F0648296%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld';
-    // var queryUrl = 'http://duraark-sdas:8890/sparql?query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AFROM+%3Chttp%3A%2F%2Fdata.duraark.eu%2Ftest_graph%3E%0D%0AWHERE%0D%0A%7B%0D%0A++%3Chttp%3A%2F%2Fdata.duraark.eu%2Fresource%2F0648296%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&should-sponge=&format=application%2Fjson-ld';
-    // var queryUrl = 'http://duraark-sdas:8890/sparql?default-graph-uri=&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
-    var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
+    // var queryUrl = 'http://data.duraark.eu/sparql?default-graph-uri=&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
+    var queryUrl = 'http://duraark-sdas:8890/sparql?default-graph-uri=&query=PREFIX+duraark%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0ACONSTRUCT%0D%0A%7B%0D%0A++++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0AWHERE%0D%0A%7B%0D%0A++%3C' + uriEscaped + '%3E+%3Fp+%3Fo+.%0D%0A%7D%0D%0A&format=application%2Fjson-ld';
 
     console.log('queryUrl:\n\n' + queryUrl);
 
@@ -162,7 +159,7 @@ function insertIntoSDAS(nquads) {
   return new Promise(function(resolve, reject) {
 
     var outputFile = path.join('/tmp', uuid.v4() + '.ttl');
-    // outputFile = '/home/hecher/Projects/duraark-system/duraark-sda/scripts/rdf/books2.ttl';
+    // outputFile = '/home/hecher/Projects/duraark-system/duraark-sdas/scripts/rdf/books2.ttl';
 
     console.log('RDF file to store: ' + outputFile);
 
@@ -170,7 +167,7 @@ function insertIntoSDAS(nquads) {
 
     try {
       // FIXXME: read credentials and host from config file!
-      var args = '--digest --user dba:dba --url http://duraark-sdas:8890/sparql-graph-crud-auth?graph-uri=http://fha.local/playground -X POST -T ' + outputFile;
+      var args = '--digest --user dba:dba --url http://duraark-sdass:8890/sparql-graph-crud-auth?graph-uri=http://fha.local/playground -X POST -T ' + outputFile;
 
       // console.log('args: ' + JSON.stringify(args.split(' '), null, 4));
 
