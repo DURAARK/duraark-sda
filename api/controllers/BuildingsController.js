@@ -25,7 +25,7 @@ module.exports = {
     }
 
     // var sparqlQuery = 'http://data.duraark.eu/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0A';
-    var sparqlQuery = 'http://duraark-sdas:8890/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0A';
+    var sparqlQuery = sails.config.sdasHost + '/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=PREFIX+buildm%3A+%3Chttp%3A%2F%2Fdata.duraark.eu%2Fvocab%2Fbuildm%2F%3E%0D%0A%0D%0A';
 
     sparqlQuery += 'select+distinct+';
 
@@ -129,8 +129,8 @@ module.exports = {
     // FIXXME: somehow this code is reached, even if the return of the 'emptyResult' is executed above.
     // Check the code path to eventually remove the 'abort' workaround!
     if (!abort) {
-      var url = 'http://duraark-sdas:8890/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=' + encodeURIComponent(sparqlQuery) + '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
-      // var url = 'http://duraark-sdas:8890/sparql?' + sparqlQuery + '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
+      var url = sails.config.sdasHost + '/sparql?default-graph-uri=http%3A%2F%2Fdata.duraark.eu%2Ftest_graph&query=' + encodeURIComponent(sparqlQuery) + '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
+      // var url = sails.config.sdasHost + '/sparql?' + sparqlQuery + '&should-sponge=&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on';
       console.log('url: ' + url);
 
       request(url, function(err, response, body) {

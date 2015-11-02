@@ -26,6 +26,7 @@ module.exports = {
    ***************************************************************************/
 
   port: 5013,
+  sdasHost: 'http://data.duraark.eu'
 
   /***************************************************************************
    * Set the log level in production environment to "silent"                 *

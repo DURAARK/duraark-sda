@@ -21,5 +21,7 @@ module.exports = {
   //   connection: 'someMongodbServer'
   // }
 
-  port: 5013
+  port: 5013,
+  sdasHost: 'http://data.duraark.eu'
+  // sdasHost: 'http://duraark-sdas:8890' // local virtuoso endpoint
 };
