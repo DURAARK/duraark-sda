@@ -54,7 +54,18 @@ module.exports = {
     //
     // console.log('filteredBuildm: ' + JSON.stringify(filteredBuildm, null, 2));
 
-    jsonld.toRDF(buildm, {
+    // Note: the 'sda_versioning' service does not cope with typed triples, so we remove the type here.
+    // This should be fixed in the service!
+    var typelessBuildm = _.forEach(buildm, function(predicate) {
+        console.log('predicate: ' + JSON.stringify(predicate[0], null, 2));
+      if (predicate[0] && predicate[0]['@type']) {
+        delete predicate[0]['@type'];
+      }
+    });
+
+    console.log('typelessBuildm: \n\n' + JSON.stringify(typelessBuildm, null, 4));
+
+    jsonld.toRDF(typelessBuildm, {
       format: 'application/nquads'
     }).then(function(ntripleString) {
       // console.log('n-turtle:\n\n' + ntripleString);
@@ -64,10 +75,10 @@ module.exports = {
         console.log('     ' + line);
       });
 
-      insertIntoSDAS(ntripleString, buildm['@id']).then(function() {
+      insertIntoSDAS(ntripleString, typelessBuildm['@id']).then(function() {
         console.log('\nUpdate successful!')
         console.log('-----------------------------------------------------\n')
-        return res.send(buildm).status(200);
+        return res.send(typelessBuildm).status(200);
       });
 
     }).catch(function(err) {
