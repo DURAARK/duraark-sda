@@ -4,3 +4,6 @@
 [submodule "duraark-seed-templates"]
 	path = duraark-seed-templates
 	url = https://github.com/DURAARK/duraark-seed-templates.git
+[submodule "fixtures/duraark-sdas-queries"]
+	path = fixtures/duraark-sdas-queries
+	url = https://github.com/DURAARK/duraark-sdas-queries
