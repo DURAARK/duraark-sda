@@ -26,7 +26,6 @@ module.exports = {
    ***************************************************************************/
 
   port: 5013,
-  sdasHost: 'http://data.duraark.eu'
 
   /***************************************************************************
    * Set the log level in production environment to "silent"                 *
@@ -36,4 +35,11 @@ module.exports = {
   //   level: "silent"
   // }
 
+  /***************************************************************************
+   * SDAS configuration                                                      *
+   ***************************************************************************/
+
+  sdasHost: 'http://data.duraark.eu',
+  sdasSparqlEndpoint: 'http://data.duraark.eu/sparql',
+  'default-graph-uri': 'http://data.duraark.eu/sdas'
 };

@@ -10,13 +10,21 @@ var querystring = require('querystring'),
 
 module.exports = {
   findOne: function(req, res, next) {
-    var id = req.param('id');
+    var id = req.param('id'),
+    queryConfig = req.param('queryConfig');
+
+    console.log('id: %s', id);
+    console.log('queryConfig: %s', JSON.stringify(queryConfig, null, 4));
 
     Queries.findOne({
       id: id
     }).exec(function(err, queryRecord) {
       if (err) {
         res.send(err).status(500);
+      }
+
+      if (!queryRecord) {
+        res.send('Cannot find query with ID ' + id).status(500);
       }
 
       var sparqlQuery = {
@@ -26,13 +34,13 @@ module.exports = {
       };
 
       var sparqlQueryString = querystring.stringify(sparqlQuery);
-      var sparqlEndpoint = 'http://data.duraark.eu/sparql'; // FIXXME: make configurable!
+      var sparqlEndpoint = sails.config.sdasSparqlEndpoint;
       var url = sparqlEndpoint + '?' + sparqlQueryString;
 
-      // console.log('url: %s', url);
+      console.log('url: ' + url);
 
       got(url).then(function(response) {
-        // console.log(response.body);
+        console.log(response.body);
         queryRecord.result = response.body;
         queryRecord.save().then(function(queryRecord) {
           res.send(queryRecord).status(200);
@@ -44,6 +52,6 @@ module.exports = {
           res.send(queryRecord).status(500);
         });
       });
-    })
+    });
   }
 };

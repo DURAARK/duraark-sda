@@ -5,8 +5,8 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var IfcEnrichmentUnfocused = require('../../bindings/ifcEnrichment/app'),
-	FocusedCrawler = require('../../bindings/FocusedCrawler/app');
+var IfcEnrichmentUnfocused = require('../../libs/ifcEnrichment/app'),
+	FocusedCrawler = require('../../libs/FocusedCrawler/app');
 
 var _UNFOCUSED_CRAWLER_ = false;
 

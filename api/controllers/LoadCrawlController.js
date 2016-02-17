@@ -5,7 +5,7 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var FocusedCrawler = require('../../bindings/FocusedCrawler/app');
+var FocusedCrawler = require('../../libs/FocusedCrawler/app');
 
 module.exports = {
   create: function(req, res, next) {

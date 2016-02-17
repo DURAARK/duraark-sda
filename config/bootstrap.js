@@ -12,13 +12,25 @@
 var fs = require('fs'),
   path = require('path'),
   YAML = require('yamljs'),
-  queriesConfigPath = path.join(__dirname, '..', 'fixtures', 'duraark-sdas-queries/');
+  queriesConfigPath = path.join(__dirname, '..', 'fixtures', 'duraark-sdas-queries/'),
+  removeBeforeLoading = true;
 
 module.exports.bootstrap = function(cb) {
   initQueries(cb);
 };
 
 function initQueries(cb) {
+  if (removeBeforeLoading) {
+    console.log('[init] Remove all existing queries as requested');
+    Queries.destroy({}).then(function() {
+      loadQueriesFromFiles(cb);
+    });
+  } else {
+    loadQueriesFromFiles(cb);
+  }
+}
+
+function loadQueriesFromFiles(cb) {
   try {
     FileService.getFileList({
       path: queriesConfigPath,

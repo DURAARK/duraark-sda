@@ -11,6 +11,7 @@ module.exports = {
     label: 'string',
     description: 'string',
     sparql: 'string',
+    variables: 'array',
     result: 'json'
   }
 };

@@ -13,7 +13,8 @@ var jsonld = require('jsonld'),
   uuid = require('node-uuid'),
   escape = require('escape-html'),
   path = require('path'),
-  fs = require('fs');
+  fs = require('fs'),
+  util = require('util');
 
 module.exports = {
   physicalAssets: function(req, res) {
@@ -33,7 +34,7 @@ module.exports = {
     //
     // return res.send(buildm).status(200);
 
-    // To receive JSON-LD we use this clumsy request url here, which encodes the
+    // To receive JSON-LD we use this clumsy request url below, which encodes the
     // following SPARQL query:
     //
     // PREFIX duraark: <http://data.duraark.eu/vocab/buildm/> \
@@ -98,6 +99,30 @@ module.exports = {
 
       return res.send(jsonld).status(200);
     });
+  },
+
+  existingEntries: function(req, res) {
+    var predicate = req.param('predicate');
+
+    if (!predicate) {
+      var errorText = 'Provide a "predicate" query parameter!';
+      return res.send(errorText).status(500)
+    }
+      sparqlString = util.format('SELECT DISTINCT ?%s FROM <http://data.duraark.eu/sdas> \
+           WHERE { \
+             ?physicalAsset <http://data.duraark.eu/vocab/buildm/%s> ?%s \
+           } \
+           ORDER BY DESC(?%s)', predicate, predicate, predicate, predicate);
+
+    var config = {
+      sparql: sparqlString
+    };
+
+    // console.log('sparql: ' + this.SDAS);
+
+    this.SDAS.executeSparqlQuery(config).then(function(jsonResults) {
+      res.send(JSON.parse(jsonResults)).status(200);
+    });
   }
 }
 
@@ -153,49 +178,4 @@ function generateURI(buildm) {
   // console.log('uri: ' + uri);
 
   return uri;
-}
-
-function insertIntoSDAS(nquads) {
-  return new Promise(function(resolve, reject) {
-
-    var outputFile = path.join('/tmp', uuid.v4() + '.ttl');
-    // outputFile = '/home/hecher/Projects/duraark-system/duraark-sdas/scripts/rdf/books2.ttl';
-
-    console.log('RDF file to store: ' + outputFile);
-
-    fs.writeFileSync(outputFile, nquads);
-
-    try {
-      // FIXXME: read credentials and host from config file!
-      var args = '--digest --user dba:dba --url http://duraark-sdass:8890/sparql-graph-crud-auth?graph-uri=http://fha.local/playground -X POST -T ' + outputFile;
-
-      // console.log('args: ' + JSON.stringify(args.split(' '), null, 4));
-
-      console.log('[SdasController::insertIntoSDAS] about to run: "curl ' + args + '"');
-
-      var executable = spawn('curl', args.split(' '));
-
-      executable.stdout.on('data', function(data) {
-        console.log('stdout: ' + data);
-      });
-
-      executable.stderr.on('data', function(err) {
-        console.log(err.toString());
-        //  return reject('[SdasController::insertIntoSDAS] ERROR during program execution:\n\n' + err);
-      });
-
-      executable.on('close', function(code) {
-        if (code !== 0) { // 'e57metadata' return '1' on success
-          console.log('[SdasController::insertIntoSDAS] ERROR: exited with code:' + code);
-          return reject('[SdasController::insertIntoSDAS] ERROR: exited with code: \n\n' + code + '\n');
-        }
-
-        console.log('[SdasController::insertIntoSDAS]     ... finished');
-        resolve();
-      });
-    } catch (err) {
-      console.log('[SdasController::insertIntoSDAS] ERROR on program start:\n\n' + err + '\n');
-      return reject('[SdasController::insertIntoSDAS] ERROR on program start:\n\n' + err);
-    }
-  });
 }

@@ -22,6 +22,13 @@ module.exports = {
   // }
 
   port: 5013,
-  sdasHost: 'http://data.duraark.eu'
+
+  /***************************************************************************
+   * SDAS configuration                                                      *
+   ***************************************************************************/
+
   // sdasHost: 'http://duraark-sdas:8890' // local virtuoso endpoint
+  sdasHost: 'http://data.duraark.eu',
+  sdasSparqlEndpoint: 'http://data.duraark.eu/sparql',
+  'default-graph-uri': 'http://data.duraark.eu/sdas'
 };
