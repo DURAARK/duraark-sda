@@ -21,7 +21,7 @@ module.exports.bootstrap = function(cb) {
 
 function initQueries(cb) {
   if (removeBeforeLoading) {
-    console.log('[init] Remove all existing queries as requested');
+    console.log('[duraark-sda] Remove all existing queries as requested');
     Queries.destroy({}).then(function() {
       loadQueriesFromFiles(cb);
     });
@@ -31,6 +31,7 @@ function initQueries(cb) {
 }
 
 function loadQueriesFromFiles(cb) {
+  console.log('[duraark-sda] Looking for query fixtures in: ' + queriesConfigPath);
   try {
     FileService.getFileList({
       path: queriesConfigPath,
