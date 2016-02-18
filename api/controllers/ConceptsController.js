@@ -102,26 +102,65 @@ module.exports = {
   },
 
   existingEntries: function(req, res) {
-    var predicate = req.param('predicate');
+    var predicate = req.param('predicate'),
+      refresh = req.param('refresh') || false;
 
     if (!predicate) {
       var errorText = 'Provide a "predicate" query parameter!';
       return res.send(errorText).status(500)
     }
-      sparqlString = util.format('SELECT DISTINCT ?%s FROM <http://data.duraark.eu/sdas> \
+
+    if (refresh) {
+      console.log('[duraark-sda] requesting refresh of cache for: ' + predicate);
+    };
+
+    FacetItems.findOne({
+      label: predicate
+    }).exec(function(err, facetItemsRecord) {
+      if (err) {
+        throw new Error(err);
+        return res.send(err).status(500);
+      }
+
+      if (facetItemsRecord && !refresh) {
+        console.log('[duraark-sda] returning cached entries for: ' + predicate);
+        return res.send(facetItemsRecord.items).status(200);
+      } else {
+        console.log('[duraark-sda] getting current entries from SDAS for: ' + predicate);
+        var sparqlString = util.format('SELECT DISTINCT ?%s FROM <http://data.duraark.eu/sdas> \
            WHERE { \
              ?physicalAsset <http://data.duraark.eu/vocab/buildm/%s> ?%s \
            } \
            ORDER BY DESC(?%s)', predicate, predicate, predicate, predicate);
 
-    var config = {
-      sparql: sparqlString
-    };
+        var config = {
+          sparql: sparqlString
+        };
 
-    // console.log('sparql: ' + this.SDAS);
+        // console.log('sparql: ' + this.SDAS);
 
-    this.SDAS.executeSparqlQuery(config).then(function(jsonResults) {
-      res.send(JSON.parse(jsonResults)).status(200);
+        this.SDAS.executeSparqlQuery(config).then(function(jsonResults) {
+          var results = JSON.parse(jsonResults);
+
+          var items = _.map(results.results.bindings, function(item) {
+            return item[predicate];
+          });
+
+          // console.log('items: ' + JSON.stringify(items));
+
+          FacetItems.create({
+            label: predicate,
+            items: items
+          }).exec(function(err, facetItemsRecord) {
+            if (err) {
+              console.log('ERROR creating facetItem record: ' + err);
+              return res.send(err).status(500);
+            }
+
+            res.send(facetItemsRecord.items).status(200);
+          });
+        });
+      }
     });
   }
 }
