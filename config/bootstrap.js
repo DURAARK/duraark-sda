@@ -42,9 +42,14 @@ function loadQueriesFromFiles(cb) {
 
         Queries.findOne(queryConfig).then(function(queryRecord) {
           if (!queryRecord) {
-            Queries.create(queryConfig).then(function(queryRecord) {
-              console.log('[init] Added query: %s', queryRecord.label)
-            });
+            // console.log('queryConfig: ' + JSON.stringify(queryConfig, null, 4));
+            if (typeof(queryConfig.show) !== 'undefined' || queryConfig.show === false) {
+              console.log('[init] Skipping hidden query: %s', queryConfig.label);
+            } else {
+              Queries.create(queryConfig).then(function(queryRecord) {
+                console.log('[init] Added query: %s', queryRecord.label)
+              });
+            }
           } else {
             console.log('[init] Skipping existing query: %s', queryRecord.label);
           }
