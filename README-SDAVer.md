@@ -5,7 +5,7 @@
 ## Methods:
 
 GET /versionBuildM - will version the buildM instances from the working graph into the final graph.
-    - parameters: resource, this is an optional parameter, but in principle what it does, it is used as a filtering parameter, and is an inclusive filter for buildM resources that you want to version.
+    - parameters: resource, this is a mandatory parameter, but can be left empty. It has however to be present, otherwise the  API call will fail (this should be fixed in the underlying code!). It is used as a filtering parameter, and is an inclusive filter for buildM resources that you want to version.
      - This is a GET method.
 
 POST /addTriples: Payload is a string that contains the triples in N-TRIPLE format. The triples have to conform to the buildM schema. The method adds the triples to the intermediate graph 'dummy_graph'. From there the revisioning methods will pick up the data. Internally the intermediate graph can be set via the "working_graph" setting.
